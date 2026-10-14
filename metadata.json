@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Matt"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Battery, signal and network of the iPhone, read from BlueFerry",
+        "Description[it]": "Batteria, segnale e rete dell'iPhone, letti da BlueFerry",
+        "Icon": "smartphone",
+        "Id": "org.matt.iphonestatus",
+        "License": "MIT",
+        "Name": "iPhone Status",
+        "Name[it]": "Stato iPhone",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
