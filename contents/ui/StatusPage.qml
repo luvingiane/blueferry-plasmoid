@@ -30,7 +30,7 @@ Item {
                 value: applet.batteryText,
                 progress: applet.active && applet.batteryLevel !== null ? applet.batteryLevel : -1,
                 detail: !applet.active ? ""
-                    : applet.charging ? i18n("%1 · probably charging", batterySourceText(applet.batterySource))
+                    : applet.charging ? batterySourceText(applet.batterySource) + " · " + applet.chargingText
                     : batterySourceText(applet.batterySource)
             }
         case "network": {

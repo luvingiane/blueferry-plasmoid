@@ -84,33 +84,82 @@ PlasmoidItem {
     readonly property string networkText: networkName === null || networkName === "" ? dash : networkName
 
     // The iPhone does not report whether it is charging (its Battery Service
-    // only has Battery Level, and HFP only the level), so it is estimated: a
-    // level that rises between two exact LE readings means charging, one that
-    // drops means not. Unchanged levels keep the last verdict, which covers a
-    // phone held at 100 % on the charger.
+    // only has Battery Level, and HFP only the level), so it is estimated from
+    // exact LE readings. Each rise marks the phone as charging and updates the
+    // measured seconds per percentage point; when the next point does not come
+    // within a few times that interval the estimate expires, so a phone that
+    // stopped charging (unplugged at a plateau, full, or held at 80 % by iOS)
+    // is no longer announced. A drop ends it at once.
     property bool charging: false
-    property var lastExactLevel: null
-    property var lastExactSource: null
+    property real secondsPerPoint: 0     // measured charging rate, 0 = not known yet
+    property var chargeLevel: null       // last exact level
+    property var chargeSource: null      // its source: "gatt" or "bluez"
+    property var chargeRiseLevel: null   // level at the last rise
+    property double chargeRiseAt: 0      // time of the last rise, ms
+    property double exactSeenAt: 0       // time of the last exact reading, ms
+
+    readonly property int chargeGapMs: 120000   // a gap this short keeps the estimate
+
+    // How long without a new point before the estimate expires, in seconds.
+    function chargeTimeout() {
+        return secondsPerPoint > 0 ? Math.max(90, Math.min(1500, secondsPerPoint * 2.5)) : 300
+    }
+
+    function resetCharging() {
+        charging = false
+        secondsPerPoint = 0
+        chargeRiseLevel = null
+        chargeRiseAt = 0
+    }
 
     function estimateCharging() {
+        const now = Date.now()
         const exact = active && batteryLevel !== null && (batterySource === "gatt" || batterySource === "bluez")
         if (!exact) {
-            charging = false
-            lastExactLevel = null
-            lastExactSource = null
+            // A failed read or a short disconnect keeps the estimate; a long
+            // absence does not.
+            if (exactSeenAt === 0 || now - exactSeenAt > chargeGapMs) {
+                resetCharging()
+                chargeLevel = null
+                chargeSource = null
+            }
             return
         }
+        exactSeenAt = now
         // A new source (BlueZ's cached value against the live GATT one) is
         // not comparable with the previous reading.
-        if (lastExactLevel !== null && lastExactSource === batterySource) {
-            if (batteryLevel > lastExactLevel)
+        if (chargeLevel !== null && chargeSource === batterySource) {
+            if (batteryLevel > chargeLevel) {
+                // Only consecutive rises measure the rate: one after an
+                // expired estimate starts over.
+                if (charging && chargeRiseLevel !== null && batteryLevel > chargeRiseLevel) {
+                    const perPoint = (now - chargeRiseAt) / 1000 / (batteryLevel - chargeRiseLevel)
+                    secondsPerPoint = secondsPerPoint > 0 ? secondsPerPoint * 0.6 + perPoint * 0.4 : perPoint
+                } else {
+                    secondsPerPoint = 0
+                }
+                chargeRiseLevel = batteryLevel
+                chargeRiseAt = now
                 charging = true
-            else if (batteryLevel < lastExactLevel)
-                charging = false
+            } else if (batteryLevel < chargeLevel) {
+                resetCharging()
+            }
         }
-        lastExactLevel = batteryLevel
-        lastExactSource = batterySource
+        chargeLevel = batteryLevel
+        chargeSource = batterySource
+        if (charging && (now - chargeRiseAt) / 1000 > chargeTimeout())
+            resetCharging()
     }
+
+    // "45 s" or "3 min", for the charging rate.
+    function rateText(seconds) {
+        return seconds < 90 ? i18n("%1 s", Math.round(seconds)) : i18n("%1 min", Math.round(seconds / 60))
+    }
+
+    // How the Status tab and the tooltip describe the estimate.
+    readonly property string chargingText: !charging ? ""
+        : secondsPerPoint > 0 ? i18n("probably charging, 1 % every %1", rateText(secondsPerPoint))
+        : i18n("probably charging")
 
     readonly property string batteryIcon: {
         if (!active || batteryLevel === null)
@@ -692,7 +741,7 @@ PlasmoidItem {
         if (!active)
             return reason
         const lines = [i18n("Carrier: %1", networkText), charging
-            ? i18n("Battery: %1, probably charging", batteryText) : i18n("Battery: %1", batteryText),
+            ? i18n("Battery: %1, %2", batteryText, chargingText) : i18n("Battery: %1", batteryText),
             i18n("Signal: %1", signalText)]
         if (mediaText !== "")
             lines.push((playing ? "▶ " : "⏸ ") + mediaText)

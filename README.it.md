@@ -69,10 +69,13 @@ Il servizio è attivabile via D-Bus: se BlueFerry è spento, la prima lettura
 lo avvia.
 
 L'iPhone non dice se è in carica (il suo servizio batteria ha solo Battery
-Level, e HFP solo il livello). L'applet lo stima: una percentuale che sale tra
-due letture LE esatte mostra l'icona di ricarica e "probabilmente in carica",
-una che scende la toglie. Al 100 % o con la carica ferma all'80 % di iOS non
-si può capire.
+Level, e HFP solo il livello). L'applet lo stima dalle letture LE esatte: una
+percentuale che sale mostra l'icona di ricarica e "probabilmente in carica",
+con il ritmo misurato ("1 % ogni 45 s"). Se il punto successivo non arriva
+entro 2,5 volte quell'intervallo (almeno 90 s, al massimo 25 min; 5 min finché
+il ritmo non è noto) la stima scade, e un calo la toglie subito: un telefono
+carico o tenuto all'80 % da iOS non viene più annunciato. Una lettura persa o
+una disconnessione sotto i 2 minuti non azzerano la stima.
 
 Il tipo di rete (LTE, 5G…) non è disponibile: il profilo vivavoce Bluetooth
 dell'iPhone espone solo stato, operatore, segnale e modalità.

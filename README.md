@@ -79,10 +79,13 @@ The service is D-Bus activatable: if BlueFerry is not running, the first read
 starts it.
 
 The iPhone does not report whether it is charging (its Battery Service only
-has Battery Level, and HFP only the level). The applet estimates it: a level
-that rises between two exact LE readings shows the charging icon and
-"probably charging", one that drops clears it. It cannot tell at 100 % or
-while iOS holds the charge at 80 %.
+has Battery Level, and HFP only the level). The applet estimates it from exact
+LE readings: a rising level shows the charging icon and "probably charging",
+with the measured rate ("1 % every 45 s"). If the next point does not arrive
+within 2.5 times that interval (at least 90 s, at most 25 min; 5 min before a
+rate is known) the estimate expires, and a drop ends it at once, so a full
+phone or one held at 80 % by iOS is no longer announced. A missed reading or
+a disconnect shorter than 2 minutes keeps the estimate.
 
 The network type (LTE, 5G…) is not available: the iPhone's Bluetooth
 hands-free profile only reports status, carrier, signal and mode.
