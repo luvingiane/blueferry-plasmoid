@@ -72,6 +72,12 @@ Contact photos need `BLUEFERRY_CONTACT_PHOTOS=true` in
 The service is D-Bus activatable: if BlueFerry is not running, the first read
 starts it.
 
+The iPhone does not report whether it is charging (its Battery Service only
+has Battery Level, and HFP only the level). The applet estimates it: a level
+that rises between two exact LE readings shows the charging icon and
+"probably charging", one that drops clears it. It cannot tell at 100 % or
+while iOS holds the charge at 80 %.
+
 The network type (LTE, 5G…) is not available: the iPhone's Bluetooth
 hands-free profile only reports status, carrier, signal and mode.
 

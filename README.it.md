@@ -68,6 +68,12 @@ Le foto dei contatti richiedono `BLUEFERRY_CONTACT_PHOTOS=true` in
 Il servizio è attivabile via D-Bus: se BlueFerry è spento, la prima lettura
 lo avvia.
 
+L'iPhone non dice se è in carica (il suo servizio batteria ha solo Battery
+Level, e HFP solo il livello). L'applet lo stima: una percentuale che sale tra
+due letture LE esatte mostra l'icona di ricarica e "probabilmente in carica",
+una che scende la toglie. Al 100 % o con la carica ferma all'80 % di iOS non
+si può capire.
+
 Il tipo di rete (LTE, 5G…) non è disponibile: il profilo vivavoce Bluetooth
 dell'iPhone espone solo stato, operatore, segnale e modalità.
 
