@@ -62,13 +62,13 @@ PlasmoidItem {
     // Perché l'icona è disattivata; vuoto quando è tutto a posto.
     readonly property string reason: {
         if (!loaded)
-            return i18n("Lettura dello stato in corso…")
+            return i18n("Reading the status…")
         if (error !== "")
             return error
         if (!connected)
             return connectivityDetail !== ""
-                ? i18n("iPhone non connesso (%1)", connectivityDetail)
-                : i18n("iPhone non connesso")
+                ? i18n("iPhone not connected (%1)", connectivityDetail)
+                : i18n("iPhone not connected")
         return ""
     }
 
@@ -210,9 +210,9 @@ PlasmoidItem {
         const now = new Date()
         const minutes = Math.floor((now - date) / 60000)
         if (minutes >= 0 && minutes < 1)
-            return i18n("ora")
+            return i18n("now")
         if (minutes >= 1 && minutes < 60)
-            return i18n("%1 min fa", minutes)
+            return i18n("%1 min ago", minutes)
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
         const thatDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
         const diffDays = Math.round((today - thatDay) / 86400000)
@@ -220,7 +220,7 @@ PlasmoidItem {
         if (diffDays <= 0)
             return time
         if (diffDays === 1)
-            return i18n("ieri %1", time)
+            return i18n("yesterday %1", time)
         if (diffDays < 7)
             return Qt.locale().dayName(date.getDay(), Locale.ShortFormat) + " " + time
         return Qt.formatDate(date, "dd/MM/yy")
@@ -231,24 +231,14 @@ PlasmoidItem {
         return Math.floor(total / 60) + ":" + String(total % 60).padStart(2, "0")
     }
 
-    function sourceText(source) {
-        switch (source) {
-        case "gatt": return i18n("Bluetooth LE (GATT), esatta")
-        case "bluez": return i18n("Bluetooth LE (BlueZ)")
-        case "hfp": return i18n("Vivavoce HFP, passi del 20 %")
-        case null: return dash
-        default: return source
-        }
-    }
-
     function registrationText(status) {
         switch (status) {
-        case "registered": return i18n("Registrato")
-        case "roaming": return i18n("In roaming")
-        case "searching": return i18n("Ricerca rete…")
-        case "unregistered": return i18n("Non registrato")
-        case "denied": return i18n("Registrazione negata")
-        case "unknown": return i18n("Sconosciuto")
+        case "registered": return i18n("Registered")
+        case "roaming": return i18n("Roaming")
+        case "searching": return i18n("Searching for a network…")
+        case "unregistered": return i18n("Not registered")
+        case "denied": return i18n("Registration denied")
+        case "unknown": return i18n("Unknown")
         case null: return dash
         default: return status
         }
@@ -256,15 +246,15 @@ PlasmoidItem {
 
     function describeFailure(exitCode, stderr) {
         if (exitCode === 127 || /not found/i.test(stderr) && !/GDBus\.Error/.test(stderr))
-            return i18n("Comando gdbus non trovato")
+            return i18n("The gdbus command was not found")
         if (/ServiceUnknown|NameHasNoOwner|not provided by any/.test(stderr))
-            return i18n("BlueFerry non è in esecuzione")
+            return i18n("BlueFerry is not running")
         if (/NoReply|Timeout|timed out/i.test(stderr))
-            return i18n("BlueFerry non risponde")
+            return i18n("BlueFerry is not responding")
         if (/AccessDenied|NotAuthorized/.test(stderr))
-            return i18n("BlueFerry ha negato l'accesso allo stato")
+            return i18n("BlueFerry denied access to the status")
         const line = stderr.trim().split("\n")[0].replace(/^Error:\s*/, "").replace(/^GDBus\.Error:/, "")
-        return line !== "" ? i18n("Errore: %1", line) : i18n("Il comando è terminato con codice %1", exitCode)
+        return line !== "" ? i18n("Error: %1", line) : i18n("The command exited with code %1", exitCode)
     }
 
     // --- Esecuzione dei comandi -------------------------------------------
@@ -344,12 +334,12 @@ PlasmoidItem {
         const status = Util.gvariantJson(stdout)
         if (!status || typeof status !== "object") {
             clearPhone()
-            error = i18n("Risposta di BlueFerry non leggibile")
+            error = i18n("BlueFerry's answer could not be read")
             return
         }
         if (status.daemon === false) {
             clearPhone()
-            error = i18n("Il daemon BlueFerry non è attivo")
+            error = i18n("The BlueFerry daemon is not active")
             return
         }
         error = ""
@@ -499,7 +489,7 @@ PlasmoidItem {
     }
 
     function callName(entry) {
-        return entry.contact_name || entry.name || entry.address || i18n("Sconosciuto")
+        return entry.contact_name || entry.name || entry.address || i18n("Unknown")
     }
 
     function dial(address) {
@@ -516,13 +506,13 @@ PlasmoidItem {
             const value = code === 0 ? Util.gvariantJson(out) : undefined
             if (!Array.isArray(value))
                 return
-            ensureAppIcon(i18n("Messaggi"))
+            ensureAppIcon(i18n("Messages"))
             const before = messages.length > 0 ? messages[0].time : null
             messages = value.filter(event => event && typeof event === "object").map(event => ({
                 kind: "sms",
-                app: i18n("Messaggi"),
+                app: i18n("Messages"),
                 title: Util.cleanText(event.group_name || event.contact_name || event.sender_address)
-                    || i18n("Sconosciuto"),
+                    || i18n("Unknown"),
                 body: Util.cleanText(event.body),
                 time: new Date(event.timestamp || event.seen_at || 0)
             })).sort((a, b) => b.time - a.time)
@@ -668,12 +658,12 @@ PlasmoidItem {
     toolTipSubText: {
         if (!active)
             return reason
-        const lines = [i18n("Operatore: %1", networkText), i18n("Batteria: %1", batteryText),
-            i18n("Segnale: %1", signalText)]
+        const lines = [i18n("Carrier: %1", networkText), i18n("Battery: %1", batteryText),
+            i18n("Signal: %1", signalText)]
         if (mediaText !== "")
             lines.push((playing ? "▶ " : "⏸ ") + mediaText)
         if (unseen > 0)
-            lines.push(i18np("%1 notifica nuova", "%1 notifiche nuove", unseen))
+            lines.push(i18np("%1 new notification", "%1 new notifications", unseen))
         return lines.join("\n")
     }
 
@@ -801,10 +791,10 @@ PlasmoidItem {
 
         function tabLabel(id) {
             switch (id) {
-            case "status": return i18n("Stato")
-            case "notifications": return i18n("Notifiche")
+            case "status": return i18n("Status")
+            case "notifications": return i18n("Notifications")
             case "player": return i18n("Player")
-            case "calls": return i18n("Chiamate")
+            case "calls": return i18n("Calls")
             default: return id
             }
         }
@@ -845,7 +835,7 @@ PlasmoidItem {
                             Layout.fillWidth: true
                         }
                         PlasmaComponents.Label {
-                            text: root.active ? i18n("Connesso") : i18n("Disconnesso")
+                            text: root.active ? i18n("Connected") : i18n("Disconnected")
                             color: root.active ? Kirigami.Theme.positiveTextColor : Kirigami.Theme.disabledTextColor
                             font: Kirigami.Theme.smallFont
                             Layout.fillWidth: true
@@ -854,7 +844,7 @@ PlasmoidItem {
                     PlasmaComponents.ToolButton {
                         icon.name: "view-refresh"
                         display: PlasmaComponents.AbstractButton.IconOnly
-                        text: i18n("Aggiorna")
+                        text: i18n("Refresh")
                         onClicked: root.refreshAll()
                         PlasmaComponents.ToolTip.text: text
                         PlasmaComponents.ToolTip.visible: hovered

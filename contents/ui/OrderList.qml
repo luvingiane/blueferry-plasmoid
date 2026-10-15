@@ -54,7 +54,7 @@ ColumnLayout {
             }
             QQC2.ToolButton {
                 icon.name: "arrow-up"
-                text: i18n("Sposta su")
+                text: i18n("Move up")
                 display: QQC2.AbstractButton.IconOnly
                 enabled: index > 0
                 onClicked: list.move(index, index - 1)
@@ -64,7 +64,7 @@ ColumnLayout {
             }
             QQC2.ToolButton {
                 icon.name: "arrow-down"
-                text: i18n("Sposta giù")
+                text: i18n("Move down")
                 display: QQC2.AbstractButton.IconOnly
                 enabled: index < list.items.length - 1
                 onClicked: list.move(index, index + 1)

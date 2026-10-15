@@ -1,95 +1,118 @@
-# Stato iPhone per Plasma 6
+# iPhone Status for Plasma 6
 
-Plasmoide KDE Plasma 6 (solo QML) che mostra batteria, segnale, operatore,
-notifiche, brano in riproduzione e chiamate recenti dell'iPhone, letti da
+**English** · [Italiano](README.it.md)
+
+A KDE Plasma 6 applet (QML only) that shows your iPhone's battery, signal,
+carrier, notifications, now playing track and recent calls, read from
 [BlueFerry](https://github.com/erikwb/blueferry).
 
-- **Pannello**: icona batteria, percentuale, icona segnale (5 tacche),
-  percentuale segnale, operatore, titolo, brano in riproduzione e contatore
-  delle notifiche nuove, da riordinare o nascondere.
-- **Popup a schede**, riordinabili o nascondibili:
-  - **Stato**: sezioni Batteria (con "~" se arriva dal vivavoce HFP), Rete
-    cellulare e Bluetooth, nello stile dell'applet Batteria di Plasma;
-  - **Notifiche**: SMS dallo storico di BlueFerry e notifiche delle app
-    dell'iPhone, in stile iOS, con l'icona dell'app presa dal tema d'icone;
-  - **Player**: copertina, brano, artista, album, avanzamento e comandi;
-  - **Chiamate**: ultime chiamate con foto del contatto (o iniziali) e
-    pulsante per richiamare quando le chiamate HFP sono attive.
-- **Emoji** nel font scelto (predefinito Apple Color Emoji), il resto del
-  testo nel font del tema.
-- **Tooltip**: operatore, batteria e segnale, oppure il motivo per cui il
-  telefono non è raggiungibile.
+- **Panel**: battery icon, percentage, signal icon (5 bars), signal
+  percentage, carrier, title, now playing track and a count of new
+  notifications, each one reorderable or hidden.
+- **Tabbed popup**, with tabs you can reorder or hide:
+  - **Status**: Battery (with "~" when it comes from the HFP hands-free
+    link), Cellular network and Bluetooth sections, in the style of Plasma's
+    Battery applet;
+  - **Notifications**: SMS from BlueFerry's history and the iPhone's app
+    notifications, iOS style, with the app icon taken from the icon theme;
+  - **Player**: artwork, track, artist, album, progress and controls;
+  - **Calls**: recent calls with the contact's photo (or initials) and a
+    call back button when HFP calls are on.
+- **Emoji** in a font of your choice (Apple Color Emoji by default), the rest
+  of the text in the theme font.
+- **Tooltip**: carrier, battery and signal, or the reason the phone cannot be
+  reached.
+- English and Italian user interface.
 
-## Fonte dati
+## Data source
 
-L'applet chiama l'API D-Bus di BlueFerry (bus di sessione, oggetto
-`/io/weirdware/BlueFerry`) con `gdbus`:
+The applet calls BlueFerry's D-Bus API (session bus, object
+`/io/weirdware/BlueFerry`) with `gdbus`:
 
-| Dato | Metodo | Ogni |
+| Data | Method | Every |
 | --- | --- | --- |
-| Batteria, segnale, rete | `Messages1.GetStatus` | 10 s |
-| Player | `Media1.GetNowPlaying`, `Media1.SendMediaCommand` | 15 s (3 s a popup aperto) |
-| Chiamate | `CallHistory1.ListCallHistory`, `Messages1.GetContactPhoto` | 60 s |
+| Battery, signal, network | `Messages1.GetStatus` | 10 s |
+| Player | `Media1.GetNowPlaying`, `Media1.SendMediaCommand` | 15 s (3 s with the popup open) |
+| Calls | `CallHistory1.ListCallHistory`, `Messages1.GetContactPhoto` | 60 s |
 | SMS | `Messages1.ListEvents` | 30 s |
-| AirPlay | `org.mpris.MediaPlayer2.ShairportSync` (MPRIS) | con il player |
+| AirPlay | `org.mpris.MediaPlayer2.ShairportSync` (MPRIS) | with the player |
 
-`blueferry phone-status --json` espone le stesse chiavi `phone_*` ma non dice
-se l'iPhone è connesso; il telefono è considerato connesso quando BlueFerry
-riporta `bredr` o `le`.
+`blueferry phone-status --json` exposes the same `phone_*` keys but does not
+say whether the iPhone is connected; the phone counts as connected when
+BlueFerry reports `bredr` or `le`.
 
-Le notifiche delle app (ANCS) non sono nell'API: BlueFerry le manda a Plasma
-come transienti, che non restano nello storico. L'applet le copia dal modello
-delle notifiche di Plasma mentre compaiono, quindi la lista riparte vuota a
-ogni riavvio di Plasma.
+App notifications (ANCS) are not part of the API: BlueFerry sends them to
+Plasma as transient notifications, which do not stay in the history. The
+applet copies them from Plasma's notification model as they appear, so the
+list starts empty again whenever Plasma restarts.
 
-BlueFerry sostituisce con "�" i caratteri di controllo e i marcatori di
-direzione del testo (Discord, per esempio, racchiude i nomi tra bidi isolate).
-Su iOS sono invisibili, quindi l'applet li toglie.
+BlueFerry replaces control characters and text direction marks with "�"
+(Discord, for example, wraps names in bidi isolates). They are invisible on
+iOS, so the applet removes them.
 
-L'icona di un'app si cerca nel tema d'icone con `kiconfinder6` (KIconThemes),
-provando il nome dell'app in minuscolo e qualche alias noto (Telegram →
-`org.telegram.desktop`). Senza corrispondenza resta l'icona delle notifiche.
+An app's icon is looked up in the icon theme with `kiconfinder6`
+(KIconThemes), trying the app name in lower case and a few known aliases
+(Telegram → `org.telegram.desktop`). Without a match the notification icon
+stays.
 
-Via Bluetooth l'iPhone non manda la copertina: gli attributi AMS sono solo
-artista, album, titolo e durata. Durante AirPlay verso questo computer la
-copertina arriva da shairport-sync (MPRIS, `mpris:artUrl`); altrimenti, se
-l'opzione è attiva, si cercano artista e titolo sull'API pubblica di ricerca
-di iTunes (Apple vede i titoli cercati).
+The iPhone does not send artwork over Bluetooth: the AMS attributes are only
+artist, album, title and duration. During AirPlay to this computer the
+artwork comes from shairport-sync (MPRIS, `mpris:artUrl`); otherwise, if the
+option is on, the artist and title are looked up with the public iTunes
+search API (Apple sees the titles looked up).
 
-I comandi del player seguono la lista che l'iPhone annuncia a BlueFerry; se è
-vuota si provano comunque e un eventuale rifiuto compare nel popup.
+Player controls follow the list of commands the iPhone announces to
+BlueFerry; when that list is empty they are tried anyway and a refusal shows
+up in the popup.
 
-Le foto dei contatti richiedono `BLUEFERRY_CONTACT_PHOTOS=true` in
-`~/.config/blueferry/local.env`, un riavvio di BlueFerry e
+Contact photos need `BLUEFERRY_CONTACT_PHOTOS=true` in
+`~/.config/blueferry/local.env`, a BlueFerry restart and
 `blueferry contacts-sync`.
 
-Il servizio è attivabile via D-Bus: se BlueFerry è spento, la prima lettura
-lo avvia.
+The service is D-Bus activatable: if BlueFerry is not running, the first read
+starts it.
 
-Il tipo di rete (LTE, 5G…) non è disponibile: il profilo vivavoce Bluetooth
-dell'iPhone espone solo stato, operatore, segnale e modalità.
+The network type (LTE, 5G…) is not available: the iPhone's Bluetooth
+hands-free profile only reports status, carrier, signal and mode.
 
-## Requisiti
+## Requirements
 
 - KDE Plasma 6
-- BlueFerry 0.8.1 o successivo; segnale e operatore richiedono le chiamate
-  attive (`blueferry calls enable`)
+- BlueFerry 0.8.1 or later; signal and carrier need calls turned on
+  (`blueferry calls enable`)
 
-## Installazione
+## Installation
 
 ```bash
 kpackagetool6 -t Plasma/Applet -i .
 ```
 
-Aggiornamento dopo una modifica:
+Updating after a change:
 
 ```bash
 kpackagetool6 -t Plasma/Applet -u .
 systemctl --user restart plasma-plasmashell
 ```
 
-Prova senza pannello (pacchetto `plasma-sdk`):
+## Translations
+
+Source strings are in English; Italian lives in `po/it.po`. After changing
+any string:
+
+```bash
+po/build.sh
+```
+
+refreshes `po/template.pot`, merges it into the catalogues and compiles the
+`.mo` files into `contents/locale/`. For a new language:
+`msginit --locale=<code> --input=po/template.pot --output-file=po/<code>.po`.
+
+Trying it without a panel (`plasma-sdk` package):
 
 ```bash
 plasmoidviewer -a org.matt.iphonestatus
 ```
+
+## License
+
+MIT, see [LICENSE](LICENSE).

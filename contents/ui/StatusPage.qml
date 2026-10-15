@@ -13,9 +13,9 @@ Item {
 
     function batterySourceText(source) {
         switch (source) {
-        case "gatt": return i18n("Bluetooth LE, valore esatto")
-        case "bluez": return i18n("Bluetooth LE, tramite BlueZ")
-        case "hfp": return i18n("Vivavoce, a passi del 20 %")
+        case "gatt": return i18n("Bluetooth LE, exact value")
+        case "bluez": return i18n("Bluetooth LE, through BlueZ")
+        case "hfp": return i18n("Hands-free, in 20 % steps")
         default: return ""
         }
     }
@@ -26,7 +26,7 @@ Item {
         case "battery":
             return {
                 icon: applet.batteryIcon,
-                title: i18n("Batteria"),
+                title: i18n("Battery"),
                 value: applet.batteryText,
                 progress: applet.active && applet.batteryLevel !== null ? applet.batteryLevel : -1,
                 detail: applet.active ? batterySourceText(applet.batterySource) : ""
@@ -40,7 +40,7 @@ Item {
                 parts.push(registration)
             return {
                 icon: applet.signalIcon,
-                title: i18n("Rete cellulare"),
+                title: i18n("Cellular network"),
                 value: applet.signalBars < 0 ? applet.dash : i18n("%1/5", applet.signalBars),
                 progress: applet.active && applet.signalStrength !== null ? applet.signalStrength : -1,
                 detail: applet.active ? parts.join(" · ") : ""
@@ -51,7 +51,7 @@ Item {
                 icon: applet.active ? "network-bluetooth-activated" : "network-bluetooth",
                 title: i18n("Bluetooth"),
                 value: !applet.loaded || applet.error !== "" ? applet.dash
-                    : applet.connected ? i18n("Connesso") : i18n("Disconnesso"),
+                    : applet.connected ? i18n("Connected") : i18n("Disconnected"),
                 progress: -1,
                 detail: applet.connectivityDetail
             }
@@ -135,7 +135,7 @@ Item {
 
         PlasmaComponents.Label {
             visible: page.applet.loaded
-            text: i18n("Aggiornato alle %1", Qt.formatTime(page.applet.lastUpdate, "hh:mm:ss"))
+            text: i18n("Updated at %1", Qt.formatTime(page.applet.lastUpdate, "hh:mm:ss"))
             font: Kirigami.Theme.smallFont
             opacity: 0.6
             horizontalAlignment: Text.AlignRight

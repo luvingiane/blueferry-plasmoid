@@ -26,16 +26,16 @@ Item {
             Layout.bottomMargin: Kirigami.Units.smallSpacing
 
             PlasmaComponents.Label {
-                text: i18np("%1 notifica", "%1 notifiche", page.applet.notifications.length)
+                text: i18np("%1 notification", "%1 notifications", page.applet.notifications.length)
                 opacity: 0.7
                 Layout.fillWidth: true
             }
             PlasmaComponents.ToolButton {
                 visible: page.applet.appNotifications.length > 0
                 icon.name: "edit-clear-history"
-                text: i18n("Cancella")
+                text: i18n("Clear")
                 onClicked: page.applet.clearNotifications()
-                PlasmaComponents.ToolTip.text: i18n("Cancella le notifiche delle app (gli SMS restano in BlueFerry)")
+                PlasmaComponents.ToolTip.text: i18n("Clear the app notifications (SMS stay in BlueFerry)")
                 PlasmaComponents.ToolTip.visible: hovered
                 PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
             }
@@ -140,7 +140,7 @@ Item {
         width: parent.width - Kirigami.Units.gridUnit * 4
         visible: page.applet.notifications.length === 0
         iconName: "notifications"
-        text: i18n("Nessuna notifica")
-        explanation: i18n("Gli SMS arrivano dallo storico di BlueFerry. Le notifiche delle app compaiono qui da quando Plasma è avviato, perché Plasma non le conserva.")
+        text: i18n("No notifications")
+        explanation: i18n("SMS come from BlueFerry's history. App notifications show up here from the moment Plasma starts, because Plasma does not keep them.")
     }
 }

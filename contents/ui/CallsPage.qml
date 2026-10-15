@@ -23,9 +23,9 @@ Item {
 
     function directionText(direction) {
         switch (direction) {
-        case "incoming": return i18n("In arrivo")
-        case "outgoing": return i18n("In uscita")
-        case "missed": return i18n("Persa")
+        case "incoming": return i18n("Incoming")
+        case "outgoing": return i18n("Outgoing")
+        case "missed": return i18n("Missed")
         default: return ""
         }
     }
@@ -98,7 +98,7 @@ Item {
                     PlasmaComponents.ToolButton {
                         visible: page.applet.callsEnabled && Util.isPhoneAddress(entry.modelData.address)
                         icon.name: "call-start"
-                        text: i18n("Richiama %1", entry.name)
+                        text: i18n("Call %1 back", entry.name)
                         display: PlasmaComponents.AbstractButton.IconOnly
                         onClicked: page.applet.dial(entry.modelData.address)
                         PlasmaComponents.ToolTip.text: text
@@ -115,7 +115,7 @@ Item {
         width: parent.width - Kirigami.Units.gridUnit * 4
         visible: page.applet.calls.length === 0
         iconName: "call-start"
-        text: i18n("Nessuna chiamata recente")
-        explanation: i18n("Lo storico chiamate di BlueFerry è vuoto o spento («blueferry call-history enable»).")
+        text: i18n("No recent calls")
+        explanation: i18n("BlueFerry's call history is empty or turned off (“blueferry call-history enable”).")
     }
 }

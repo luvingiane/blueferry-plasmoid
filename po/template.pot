@@ -1,0 +1,392 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the blueferry-plasmoid package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blueferry-plasmoid\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-15 15:45+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: contents/ui/CallsPage.qml:26
+msgid "Incoming"
+msgstr ""
+
+#: contents/ui/CallsPage.qml:27
+msgid "Outgoing"
+msgstr ""
+
+#: contents/ui/CallsPage.qml:28
+msgid "Missed"
+msgstr ""
+
+#: contents/ui/CallsPage.qml:101
+msgid "Call %1 back"
+msgstr ""
+
+#: contents/ui/CallsPage.qml:118
+msgid "No recent calls"
+msgstr ""
+
+#: contents/ui/CallsPage.qml:119
+msgid "BlueFerry's call history is empty or turned off (“blueferry call-history enable”)."
+msgstr ""
+
+#: contents/ui/configGeneral.qml:31
+msgid "Title:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:32 contents/ui/main.qml:36
+#: contents/ui/main.qml:126
+msgid "iPhone"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:37
+msgid "Panel"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:41
+msgid "Items:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:45
+msgid "Battery icon"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:46
+msgid "Battery percentage"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:47
+msgid "Signal icon"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:48
+msgid "Signal percentage"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:49
+msgid "Carrier"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:50
+msgid "Title"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:51
+msgid "Now playing"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:52
+msgid "New notification count"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:60
+msgid "Popup"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:64
+msgid "Tabs:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:68 contents/ui/main.qml:794
+msgid "Status"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:69 contents/ui/main.qml:795
+msgid "Notifications"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:70 contents/ui/main.qml:796
+msgid "Player"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:71
+msgid "Recent calls"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:78
+msgid "Status sections:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:82 contents/ui/StatusPage.qml:29
+msgid "Battery"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:83 contents/ui/StatusPage.qml:43
+msgid "Cellular network"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:84 contents/ui/StatusPage.qml:52
+msgid "Bluetooth"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:92
+msgid "Artwork:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:93
+msgid "Look it up online on iTunes"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:96
+msgid "The iPhone does not send artwork over Bluetooth. During AirPlay it comes from shairport-sync; otherwise the artist and title are looked up with the iTunes API."
+msgstr ""
+
+#: contents/ui/configGeneral.qml:105
+msgid "Emoji font:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:127
+msgid "The network type (LTE, 5G…) is not available: the iPhone's Bluetooth hands-free profile does not report it."
+msgstr ""
+
+#: contents/ui/main.qml:65
+msgid "Reading the status…"
+msgstr ""
+
+#: contents/ui/main.qml:70
+msgid "iPhone not connected (%1)"
+msgstr ""
+
+#: contents/ui/main.qml:71
+msgid "iPhone not connected"
+msgstr ""
+
+#: contents/ui/main.qml:76 contents/ui/main.qml:686
+msgid "%1 %"
+msgstr ""
+
+#: contents/ui/main.qml:82
+msgid "%1 % (%2/5)"
+msgstr ""
+
+#: contents/ui/main.qml:124
+msgid "AirPlay"
+msgstr ""
+
+#: contents/ui/main.qml:126
+msgid "%1 · iPhone"
+msgstr ""
+
+#: contents/ui/main.qml:213
+msgid "now"
+msgstr ""
+
+#: contents/ui/main.qml:215
+msgid "%1 min ago"
+msgstr ""
+
+#: contents/ui/main.qml:223
+msgid "yesterday %1"
+msgstr ""
+
+#: contents/ui/main.qml:236
+msgid "Registered"
+msgstr ""
+
+#: contents/ui/main.qml:237
+msgid "Roaming"
+msgstr ""
+
+#: contents/ui/main.qml:238
+msgid "Searching for a network…"
+msgstr ""
+
+#: contents/ui/main.qml:239
+msgid "Not registered"
+msgstr ""
+
+#: contents/ui/main.qml:240
+msgid "Registration denied"
+msgstr ""
+
+#: contents/ui/main.qml:241 contents/ui/main.qml:492 contents/ui/main.qml:515
+msgid "Unknown"
+msgstr ""
+
+#: contents/ui/main.qml:249
+msgid "The gdbus command was not found"
+msgstr ""
+
+#: contents/ui/main.qml:251
+msgid "BlueFerry is not running"
+msgstr ""
+
+#: contents/ui/main.qml:253
+msgid "BlueFerry is not responding"
+msgstr ""
+
+#: contents/ui/main.qml:255
+msgid "BlueFerry denied access to the status"
+msgstr ""
+
+#: contents/ui/main.qml:257
+msgid "Error: %1"
+msgstr ""
+
+#: contents/ui/main.qml:257
+msgid "The command exited with code %1"
+msgstr ""
+
+#: contents/ui/main.qml:337
+msgid "BlueFerry's answer could not be read"
+msgstr ""
+
+#: contents/ui/main.qml:342
+msgid "The BlueFerry daemon is not active"
+msgstr ""
+
+#: contents/ui/main.qml:509 contents/ui/main.qml:513
+msgid "Messages"
+msgstr ""
+
+#: contents/ui/main.qml:661
+msgid "Carrier: %1"
+msgstr ""
+
+#: contents/ui/main.qml:661
+msgid "Battery: %1"
+msgstr ""
+
+#: contents/ui/main.qml:662
+msgid "Signal: %1"
+msgstr ""
+
+#: contents/ui/main.qml:666
+msgid "%1 new notification"
+msgid_plural "%1 new notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+#: contents/ui/main.qml:797
+msgid "Calls"
+msgstr ""
+
+#: contents/ui/main.qml:838 contents/ui/StatusPage.qml:54
+msgid "Connected"
+msgstr ""
+
+#: contents/ui/main.qml:838 contents/ui/StatusPage.qml:54
+msgid "Disconnected"
+msgstr ""
+
+#: contents/ui/main.qml:847
+msgid "Refresh"
+msgstr ""
+
+#: contents/ui/NotificationsPage.qml:29
+msgid "%1 notification"
+msgid_plural "%1 notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+#: contents/ui/NotificationsPage.qml:36
+msgid "Clear"
+msgstr ""
+
+#: contents/ui/NotificationsPage.qml:38
+msgid "Clear the app notifications (SMS stay in BlueFerry)"
+msgstr ""
+
+#: contents/ui/NotificationsPage.qml:143
+msgid "No notifications"
+msgstr ""
+
+#: contents/ui/NotificationsPage.qml:144
+msgid "SMS come from BlueFerry's history. App notifications show up here from the moment Plasma starts, because Plasma does not keep them."
+msgstr ""
+
+#: contents/ui/OrderList.qml:57
+msgid "Move up"
+msgstr ""
+
+#: contents/ui/OrderList.qml:67
+msgid "Move down"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:104
+msgid "Untitled"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:163
+msgid "Previous"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:170
+msgid "Pause"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:170
+msgid "Play"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:176
+msgid "Next"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:190
+msgid "Volume down"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:203
+msgid "Volume up"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:211
+msgid "BlueFerry refused the command: %1"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:230
+msgid "Nothing playing"
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:234
+msgid "BlueFerry did not answer about the player."
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:236
+msgid "Media control is off in BlueFerry: “blueferry media enable”."
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:238
+msgid "The iPhone's player is not reachable (it needs the Bluetooth LE link)."
+msgstr ""
+
+#: contents/ui/PlayerPage.qml:239
+msgid "Start music on the iPhone and it will show up here."
+msgstr ""
+
+#: contents/ui/StatusPage.qml:16
+msgid "Bluetooth LE, exact value"
+msgstr ""
+
+#: contents/ui/StatusPage.qml:17
+msgid "Bluetooth LE, through BlueZ"
+msgstr ""
+
+#: contents/ui/StatusPage.qml:18
+msgid "Hands-free, in 20 % steps"
+msgstr ""
+
+#: contents/ui/StatusPage.qml:44
+msgid "%1/5"
+msgstr ""
+
+#: contents/ui/StatusPage.qml:138
+msgid "Updated at %1"
+msgstr ""
+
+#: contents/config/config.qml:7
+msgid "General"
+msgstr ""

@@ -28,28 +28,28 @@ KCM.SimpleKCM {
     Kirigami.FormLayout {
         QQC2.TextField {
             id: title
-            Kirigami.FormData.label: i18n("Titolo:")
+            Kirigami.FormData.label: i18n("Title:")
             placeholderText: i18n("iPhone")
         }
 
         Kirigami.Separator {
             Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: i18n("Pannello")
+            Kirigami.FormData.label: i18n("Panel")
         }
 
         OrderList {
-            Kirigami.FormData.label: i18n("Elementi:")
+            Kirigami.FormData.label: i18n("Items:")
             Kirigami.FormData.labelAlignment: Qt.AlignTop
             ids: Order.PANEL_IDS
             labels: ({
-                batteryIcon: i18n("Icona batteria"),
-                batteryText: i18n("Percentuale batteria"),
-                signalIcon: i18n("Icona segnale"),
-                signalText: i18n("Percentuale segnale"),
-                operator: i18n("Operatore"),
-                title: i18n("Titolo"),
-                media: i18n("Brano in riproduzione"),
-                notifications: i18n("Contatore notifiche nuove")
+                batteryIcon: i18n("Battery icon"),
+                batteryText: i18n("Battery percentage"),
+                signalIcon: i18n("Signal icon"),
+                signalText: i18n("Signal percentage"),
+                operator: i18n("Carrier"),
+                title: i18n("Title"),
+                media: i18n("Now playing"),
+                notifications: i18n("New notification count")
             })
             entries: page.cfg_panelItems
             onEdited: entries => page.cfg_panelItems = entries
@@ -61,26 +61,26 @@ KCM.SimpleKCM {
         }
 
         OrderList {
-            Kirigami.FormData.label: i18n("Schede:")
+            Kirigami.FormData.label: i18n("Tabs:")
             Kirigami.FormData.labelAlignment: Qt.AlignTop
             ids: Order.TAB_IDS
             labels: ({
-                status: i18n("Stato"),
-                notifications: i18n("Notifiche"),
+                status: i18n("Status"),
+                notifications: i18n("Notifications"),
                 player: i18n("Player"),
-                calls: i18n("Chiamate recenti")
+                calls: i18n("Recent calls")
             })
             entries: page.cfg_popupTabs
             onEdited: entries => page.cfg_popupTabs = entries
         }
 
         OrderList {
-            Kirigami.FormData.label: i18n("Sezioni dello stato:")
+            Kirigami.FormData.label: i18n("Status sections:")
             Kirigami.FormData.labelAlignment: Qt.AlignTop
             ids: Order.SECTION_IDS
             labels: ({
-                battery: i18n("Batteria"),
-                network: i18n("Rete cellulare"),
+                battery: i18n("Battery"),
+                network: i18n("Cellular network"),
                 bluetooth: i18n("Bluetooth")
             })
             entries: page.cfg_statusSections
@@ -89,11 +89,11 @@ KCM.SimpleKCM {
 
         QQC2.CheckBox {
             id: onlineArtwork
-            Kirigami.FormData.label: i18n("Copertine:")
-            text: i18n("Cercale online su iTunes")
+            Kirigami.FormData.label: i18n("Artwork:")
+            text: i18n("Look it up online on iTunes")
         }
         QQC2.Label {
-            text: i18n("Via Bluetooth l'iPhone non manda la copertina. Durante AirPlay arriva da shairport-sync; altrimenti si cerca artista e titolo sull'API di iTunes.")
+            text: i18n("The iPhone does not send artwork over Bluetooth. During AirPlay it comes from shairport-sync; otherwise the artist and title are looked up with the iTunes API.")
             wrapMode: Text.Wrap
             font: Kirigami.Theme.smallFont
             opacity: 0.7
@@ -102,7 +102,7 @@ KCM.SimpleKCM {
 
         QQC2.ComboBox {
             id: emojiFont
-            Kirigami.FormData.label: i18n("Font delle emoji:")
+            Kirigami.FormData.label: i18n("Emoji font:")
             editable: true
             // I font installati con "emoji" nel nome, più quello scelto.
             model: {
@@ -124,7 +124,7 @@ KCM.SimpleKCM {
         }
 
         QQC2.Label {
-            text: i18n("Il tipo di rete (LTE, 5G…) non è disponibile: il profilo vivavoce Bluetooth dell'iPhone non lo trasmette.")
+            text: i18n("The network type (LTE, 5G…) is not available: the iPhone's Bluetooth hands-free profile does not report it.")
             wrapMode: Text.Wrap
             opacity: 0.7
             Layout.maximumWidth: Kirigami.Units.gridUnit * 22

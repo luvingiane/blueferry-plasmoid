@@ -101,7 +101,7 @@ Item {
 
         PlasmaExtras.Heading {
             level: 2
-            text: page.applet.styled(page.track ? page.track.title || i18n("Senza titolo") : "")
+            text: page.applet.styled(page.track ? page.track.title || i18n("Untitled") : "")
             textFormat: Text.StyledText
             wrapMode: Text.Wrap
             maximumLineCount: 2
@@ -160,20 +160,20 @@ Item {
                 applet: page.applet
                 command: "previous"
                 icon.name: "media-skip-backward"
-                text: i18n("Precedente")
+                text: i18n("Previous")
             }
             MediaButton {
                 applet: page.applet
                 command: "toggle"
                 size: Kirigami.Units.iconSizes.large
                 icon.name: page.applet.playing ? "media-playback-pause" : "media-playback-start"
-                text: page.applet.playing ? i18n("Pausa") : i18n("Riproduci")
+                text: page.applet.playing ? i18n("Pause") : i18n("Play")
             }
             MediaButton {
                 applet: page.applet
                 command: "next"
                 icon.name: "media-skip-forward"
-                text: i18n("Successivo")
+                text: i18n("Next")
             }
         }
 
@@ -187,7 +187,7 @@ Item {
                 command: "volume-down"
                 size: Kirigami.Units.iconSizes.small
                 icon.name: "audio-volume-low"
-                text: i18n("Abbassa il volume")
+                text: i18n("Volume down")
             }
             PlasmaComponents.ProgressBar {
                 from: 0
@@ -200,7 +200,7 @@ Item {
                 command: "volume-up"
                 size: Kirigami.Units.iconSizes.small
                 icon.name: "audio-volume-high"
-                text: i18n("Alza il volume")
+                text: i18n("Volume up")
             }
         }
 
@@ -208,7 +208,7 @@ Item {
             Layout.fillWidth: true
             visible: page.applet.mediaError !== ""
             type: Kirigami.MessageType.Error
-            text: i18n("BlueFerry ha rifiutato il comando: %1", page.applet.mediaError)
+            text: i18n("BlueFerry refused the command: %1", page.applet.mediaError)
         }
 
         PlasmaComponents.Label {
@@ -227,16 +227,16 @@ Item {
         width: parent.width - Kirigami.Units.gridUnit * 4
         visible: !page.applet.mediaAvailable
         iconName: "media-playback-stop"
-        text: i18n("Niente in riproduzione")
+        text: i18n("Nothing playing")
         explanation: {
             const status = page.applet.nowPlaying
             if (!status)
-                return i18n("BlueFerry non ha risposto sul player.")
+                return i18n("BlueFerry did not answer about the player.")
             if (status.enabled === false)
-                return i18n("Il controllo dei media è spento in BlueFerry: «blueferry media enable».")
+                return i18n("Media control is off in BlueFerry: “blueferry media enable”.")
             if (status.available !== true)
-                return i18n("Il player dell'iPhone non è raggiungibile (serve il collegamento Bluetooth LE).")
-            return i18n("Avvia la musica sull'iPhone e comparirà qui.")
+                return i18n("The iPhone's player is not reachable (it needs the Bluetooth LE link).")
+            return i18n("Start music on the iPhone and it will show up here.")
         }
     }
 }
