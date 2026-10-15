@@ -6,6 +6,12 @@ A KDE Plasma 6 applet (QML only) that shows your iPhone's battery, signal,
 carrier, notifications, now playing track and recent calls, read from
 [BlueFerry](https://github.com/erikwb/blueferry).
 
+<img width="494" height="609" alt="Schermata_20261015_160728" src="https://github.com/user-attachments/assets/ad7c3771-dc84-4484-9284-62c33324271a" />
+<img width="526" height="634" alt="Schermata_20261015_160700" src="https://github.com/user-attachments/assets/268d43fe-8705-429b-b2ad-4800dae6095a" />
+<img width="578" height="355" alt="Schermata_20261015_160029" src="https://github.com/user-attachments/assets/38f73d31-bb41-4b26-a6da-34c72ccd2fe4" />
+<img width="530" height="418" alt="Schermata_20261015_155934" src="https://github.com/user-attachments/assets/c926d6cd-bd96-4b9d-a2bf-1b79cbff8395" />
+
+
 - **Panel**: battery icon, percentage, signal icon (5 bars), signal
   percentage, carrier, title, now playing track and a count of new
   notifications, each one reorderable or hidden.
