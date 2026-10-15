@@ -16,6 +16,7 @@ KCM.SimpleKCM {
     property alias cfg_onlineArtwork: onlineArtwork.checked
     property var cfg_popupTabs: []
     property string cfg_emojiFont
+    property string cfg_notificationClick
 
     // Plasma also hands the page every default value.
     property string cfg_titleDefault
@@ -24,6 +25,7 @@ KCM.SimpleKCM {
     property bool cfg_onlineArtworkDefault
     property var cfg_popupTabsDefault: []
     property string cfg_emojiFontDefault
+    property string cfg_notificationClickDefault
 
     Kirigami.FormLayout {
         QQC2.TextField {
@@ -85,6 +87,26 @@ KCM.SimpleKCM {
             })
             entries: page.cfg_statusSections
             onEdited: entries => page.cfg_statusSections = entries
+        }
+
+        QQC2.ComboBox {
+            id: notificationClick
+            Kirigami.FormData.label: i18n("Clicking a notification:")
+            model: [
+                { label: i18n("Opens the app, or else its web version"), value: "app" },
+                { label: i18n("Opens the app only"), value: "appOnly" },
+                { label: i18n("Does nothing"), value: "none" }
+            ]
+            textRole: "label"
+            valueRole: "value"
+            Component.onCompleted: currentIndex = Math.max(0, indexOfValue(page.cfg_notificationClick))
+            onActivated: page.cfg_notificationClick = currentValue
+            Connections {
+                target: page
+                function onCfg_notificationClickChanged() {
+                    notificationClick.currentIndex = Math.max(0, notificationClick.indexOfValue(page.cfg_notificationClick))
+                }
+            }
         }
 
         QQC2.CheckBox {

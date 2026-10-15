@@ -62,6 +62,22 @@ Item {
                     width: ListView.view.width
                     implicitHeight: content.implicitHeight + Kirigami.Units.largeSpacing * 2
 
+                    // Hover highlight; a click opens the app (see the settings).
+                    Rectangle {
+                        anchors.fill: parent
+                        color: Kirigami.Theme.highlightColor
+                        opacity: rowMouse.containsMouse && entry.modelData.kind === "app"
+                            && page.applet.notificationClick !== "none" ? 0.12 : 0
+                    }
+                    MouseArea {
+                        id: rowMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: entry.modelData.kind === "app" && page.applet.notificationClick !== "none"
+                            ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        onClicked: page.applet.openNotification(entry.modelData)
+                    }
+
                     RowLayout {
                         id: content
                         anchors.fill: parent
@@ -109,6 +125,19 @@ Item {
                                     text: page.applet.timeText(entry.modelData.time)
                                     font: Kirigami.Theme.smallFont
                                     opacity: 0.7
+                                }
+                                PlasmaComponents.ToolButton {
+                                    visible: entry.modelData.kind === "app"
+                                    opacity: rowMouse.containsMouse || hovered ? 1 : 0.4
+                                    icon.name: "window-close"
+                                    icon.width: Kirigami.Units.iconSizes.small
+                                    icon.height: Kirigami.Units.iconSizes.small
+                                    display: PlasmaComponents.AbstractButton.IconOnly
+                                    text: i18n("Clear, also on the iPhone")
+                                    onClicked: page.applet.removeNotification(entry.modelData)
+                                    PlasmaComponents.ToolTip.text: text
+                                    PlasmaComponents.ToolTip.visible: hovered
+                                    PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
                                 }
                             }
                             PlasmaComponents.Label {

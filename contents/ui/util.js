@@ -256,3 +256,26 @@ function splitWifiCalling(name) {
     }
     return { name: text, wifi: false }
 }
+
+// The web version of an iPhone app, for apps without a desktop entry here.
+const WEB_APPS = {
+    "whatsapp": "https://web.whatsapp.com",
+    "telegram": "https://web.telegram.org",
+    "discord": "https://discord.com/app",
+    "instagram": "https://www.instagram.com/direct/inbox/",
+    "messenger": "https://www.messenger.com",
+    "facebook": "https://www.facebook.com",
+    "teams": "https://teams.microsoft.com",
+    "gmail": "https://mail.google.com",
+    "outlook": "https://outlook.live.com",
+    "slack": "https://app.slack.com",
+    "x": "https://x.com",
+    "threads": "https://www.threads.net",
+    "youtube": "https://www.youtube.com",
+    "reddit": "https://www.reddit.com",
+    "linkedin": "https://www.linkedin.com"
+}
+
+function webUrl(appName) {
+    return WEB_APPS[String(appName || "").trim().toLowerCase()] || ""
+}

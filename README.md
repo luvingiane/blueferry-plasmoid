@@ -49,8 +49,19 @@ BlueFerry reports `bredr` or `le`.
 
 App notifications (ANCS) are not part of the API: BlueFerry sends them to
 Plasma as transient notifications, which do not stay in the history. The
-applet copies them from Plasma's notification model as they appear, so the
-list starts empty again whenever Plasma restarts.
+applet copies them from Plasma's notification model as they appear and keeps
+the last 50 in its local database, so they survive Plasma restarts. BlueFerry
+skips the notifications already on the iPhone when it connects, so those never
+show up.
+
+Clearing a notification in the applet also clears it on the iPhone, by
+pressing BlueFerry's "Clear" button (the ANCS negative action) for it; this
+works for notifications that arrived in the current Plasma and BlueFerry
+session and that offer the button. A notification cleared on the iPhone
+disappears from the applet when BlueFerry withdraws its desktop popup.
+Clicking a notification opens its app on this computer, or its web version
+when there is no app (see the settings). Replies are not possible: ANCS only
+offers the iPhone's positive and negative actions.
 
 BlueFerry replaces control characters and text direction marks with "�"
 (Discord, for example, wraps names in bidi isolates). They are invisible on

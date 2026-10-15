@@ -26,6 +26,10 @@
     <entry name="statusSections" type="StringList">
       <default>battery,network,bluetooth</default>
     </entry>
+    <!-- Clicking a notification: "app" (the app, else its web version), "appOnly" or "none". -->
+    <entry name="notificationClick" type="String">
+      <default>app</default>
+    </entry>
     <!-- Look artwork up with the iTunes API when AirPlay has none. -->
     <entry name="onlineArtwork" type="Bool">
       <default>true</default>

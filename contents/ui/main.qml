@@ -16,6 +16,7 @@ import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.kirigami as Kirigami
 import org.kde.notificationmanager as NotificationManager
+import QtQuick.LocalStorage
 import "order.js" as Order
 import "util.js" as Util
 
@@ -39,6 +40,7 @@ PlasmoidItem {
     readonly property var statusSections: Order.shown(Plasmoid.configuration.statusSections, Order.SECTION_IDS)
     readonly property var popupTabs: Order.shown(Plasmoid.configuration.popupTabs, Order.TAB_IDS)
     readonly property bool onlineArtwork: Plasmoid.configuration.onlineArtwork
+    readonly property string notificationClick: Plasmoid.configuration.notificationClick
 
     // --- Phone status (GetStatus) ----------------------------------------
 
@@ -631,7 +633,10 @@ PlasmoidItem {
     function plainText(text) {
         return Util.cleanText(String(text || "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]*>/g, "")
             .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
-            .replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&"))
+            .replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ")
+            .replace(/&#x([0-9a-fA-F]+);/g, (all, hex) => String.fromCodePoint(parseInt(hex, 16)))
+            .replace(/&#([0-9]+);/g, (all, dec) => String.fromCodePoint(parseInt(dec, 10)))
+            .replace(/&amp;/g, "&"))
     }
 
     readonly property string phoneMark: "📱"   // 📱, prefix of ANCS titles
@@ -647,28 +652,159 @@ PlasmoidItem {
         if (!summary.startsWith(phoneMark))
             return
         const id = role(NotificationManager.Notifications.IdRole)
-        if (appNotifications.some(item => item.id === id))
+        if (appNotifications.some(item => item.plasmaId === id))
             return
         const heading = summary.slice(phoneMark.length).trim()
         const separator = heading.indexOf(" · ")
         const created = role(NotificationManager.Notifications.CreatedRole)
         const item = {
-            id: id,
+            plasmaId: id,
             kind: "app",
             app: separator >= 0 ? heading.slice(0, separator) : heading,
             title: separator >= 0 ? heading.slice(separator + 3) : "",
             body: plainText(role(NotificationManager.Notifications.BodyRole)),
             time: created instanceof Date ? created : new Date()
         }
+        item.key = [item.app, item.title, item.body, Math.floor(item.time.getTime() / 1000)].join("\u001f")
+        // Another copy of the applet may have stored it already.
+        if (appNotifications.some(other => other.key === item.key)) {
+            appNotifications = appNotifications.map(other => other.key === item.key
+                ? Object.assign({}, other, { plasmaId: id }) : other)
+            return
+        }
         ensureAppIcon(item.app)
+        storeNotification(item)
         appNotifications = [item].concat(appNotifications).slice(0, appNotificationsKept)
         if (!root.expanded)
             unseen += 1
     }
 
+    // --- Persistence and two-way dismissal ---------------------------------
+
+    // App notifications survive Plasma restarts in the applet's local
+    // database (shared by every copy of the applet).
+    function database() {
+        const db = LocalStorage.openDatabaseSync("org.matt.iphonestatus", "", "iPhone notifications", 1000000)
+        db.transaction(tx => tx.executeSql("CREATE TABLE IF NOT EXISTS notifications"
+            + " (key TEXT PRIMARY KEY, app TEXT, title TEXT, body TEXT, time INTEGER)"))
+        return db
+    }
+
+    function loadNotifications() {
+        try {
+            const items = []
+            database().readTransaction(tx => {
+                const rows = tx.executeSql("SELECT * FROM notifications ORDER BY time DESC LIMIT ?",
+                    [appNotificationsKept]).rows
+                for (let i = 0; i < rows.length; ++i) {
+                    const row = rows.item(i)
+                    items.push({ key: row.key, plasmaId: -1, kind: "app", app: row.app, title: row.title,
+                        body: row.body, time: new Date(row.time) })
+                    ensureAppIcon(row.app)
+                }
+            })
+            appNotifications = items
+        } catch (e) {
+            console.warn("iphonestatus: cannot read stored notifications:", e)
+        }
+    }
+
+    function storeNotification(item) {
+        try {
+            database().transaction(tx => {
+                tx.executeSql("INSERT OR IGNORE INTO notifications VALUES (?, ?, ?, ?, ?)",
+                    [item.key, item.app, item.title, item.body, item.time.getTime()])
+                tx.executeSql("DELETE FROM notifications WHERE key NOT IN"
+                    + " (SELECT key FROM notifications ORDER BY time DESC LIMIT ?)", [appNotificationsKept])
+            })
+        } catch (e) {
+            console.warn("iphonestatus: cannot store a notification:", e)
+        }
+    }
+
+    function forgetStored(keys) {
+        try {
+            database().transaction(tx => {
+                for (const key of keys)
+                    tx.executeSql("DELETE FROM notifications WHERE key = ?", [key])
+            })
+        } catch (e) {
+            console.warn("iphonestatus: cannot delete stored notifications:", e)
+        }
+    }
+
+    // The row of Plasma's model that shows a notification of this session.
+    function modelRow(plasmaId) {
+        if (plasmaId < 0)
+            return -1
+        for (let row = 0; row < notificationModel.count; ++row) {
+            if (notificationModel.data(notificationModel.index(row, 0), NotificationManager.Notifications.IdRole) === plasmaId)
+                return row
+        }
+        return -1
+    }
+
+    // Dismiss on the iPhone too: BlueFerry's "Clear" button (its ANCS negative
+    // action) is pressed on the desktop notification while BlueFerry still
+    // tracks it, that is within the same Plasma and BlueFerry session.
+    function dismissOnPhone(item) {
+        const row = modelRow(item.plasmaId)
+        if (row < 0)
+            return
+        const index = notificationModel.index(row, 0)
+        const actions = notificationModel.data(index, NotificationManager.Notifications.ActionNamesRole) || []
+        if (Array.from(actions).indexOf("ancs-negative") >= 0)
+            notificationModel.invokeAction(index, "ancs-negative")
+    }
+
+    function removeNotification(item) {
+        dismissOnPhone(item)
+        forgetStored([item.key])
+        appNotifications = appNotifications.filter(other => other.key !== item.key)
+    }
+
     function clearNotifications() {
+        for (const item of appNotifications)
+            dismissOnPhone(item)
+        forgetStored(appNotifications.map(item => item.key))
         appNotifications = []
         unseen = 0
+    }
+
+    // BlueFerry withdraws the desktop notification when it is removed on the
+    // iPhone (and Plasma when the popup is closed by hand); an expired popup
+    // stays in the model marked as expired, so a removal of one that has not
+    // expired means it is gone.
+    function notificationWithdrawn(row) {
+        const index = notificationModel.index(row, 0)
+        if (notificationModel.data(index, NotificationManager.Notifications.ExpiredRole))
+            return
+        const id = notificationModel.data(index, NotificationManager.Notifications.IdRole)
+        const gone = appNotifications.filter(item => item.plasmaId === id)
+        if (gone.length === 0)
+            return
+        forgetStored(gone.map(item => item.key))
+        appNotifications = appNotifications.filter(item => item.plasmaId !== id)
+    }
+
+    // Clicking a notification opens its app on this computer (the first
+    // matching desktop entry), or its web version when it has no app.
+    function openNotification(item) {
+        if (notificationClick === "none" || item.kind !== "app")
+            return
+        const web = Util.webUrl(item.app)
+        const dirs = '"$HOME/.local/share/applications" /usr/share/applications'
+            + ' /var/lib/flatpak/exports/share/applications "$HOME/.local/share/flatpak/exports/share/applications"'
+        const names = Util.iconCandidates(item.app).map(Util.shellQuote).join(" ")
+        run("for n in " + names + "; do for d in " + dirs + '; do [ -f "$d/$n.desktop" ]'
+            + ' && exec kstart --application "$n.desktop"; done; done; '
+            + "f=$(grep -l -i -x -F " + Util.shellQuote("Name=" + item.app) + " "
+            + dirs.split(" ").map(d => d + "/*.desktop").join(" ") + ' 2>/dev/null | head -n 1); '
+            + '[ -n "$f" ] && exec kstart --application "$(basename "$f")"; exit 3', code => {
+            if (code !== 0 && notificationClick === "app" && web !== "")
+                Qt.openUrlExternally(web)
+        })
+        root.expanded = false
     }
 
     NotificationManager.Notifications {
@@ -679,6 +815,7 @@ PlasmoidItem {
         showDismissed: true
         groupMode: NotificationManager.Notifications.GroupDisabled
         Component.onCompleted: {
+            root.loadNotifications()
             for (let row = 0; row < count; ++row)
                 root.captureNotification(row)
         }
@@ -686,6 +823,10 @@ PlasmoidItem {
 
     Connections {
         target: notificationModel
+        function onRowsAboutToBeRemoved(parent, first, last) {
+            for (let row = first; row <= last; ++row)
+                root.notificationWithdrawn(row)
+        }
         function onRowsInserted(parent, first, last) {
             for (let row = first; row <= last; ++row)
                 root.captureNotification(row)

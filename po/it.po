@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blueferry-plasmoid\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 00:23+0200\n"
+"POT-Creation-Date: 2026-10-16 00:41+0200\n"
 "PO-Revision-Date: 2026-10-15 16:00+0200\n"
 "Last-Translator: Matt\n"
 "Language-Team: Italian\n"
@@ -39,270 +39,286 @@ msgstr "Nessuna chiamata recente"
 msgid "BlueFerry's call history is empty or turned off (“blueferry call-history enable”)."
 msgstr "Lo storico chiamate di BlueFerry è vuoto o spento («blueferry call-history enable»)."
 
-#: contents/ui/configGeneral.qml:31
+#: contents/ui/configGeneral.qml:33
 msgid "Title:"
 msgstr "Titolo:"
 
-#: contents/ui/configGeneral.qml:32 contents/ui/main.qml:36
-#: contents/ui/main.qml:208
+#: contents/ui/configGeneral.qml:34 contents/ui/main.qml:37
+#: contents/ui/main.qml:210
 msgid "iPhone"
 msgstr "iPhone"
 
-#: contents/ui/configGeneral.qml:37
+#: contents/ui/configGeneral.qml:39
 msgid "Panel"
 msgstr "Pannello"
 
-#: contents/ui/configGeneral.qml:41
+#: contents/ui/configGeneral.qml:43
 msgid "Items:"
 msgstr "Elementi:"
 
-#: contents/ui/configGeneral.qml:45
+#: contents/ui/configGeneral.qml:47
 msgid "Battery icon"
 msgstr "Icona batteria"
 
-#: contents/ui/configGeneral.qml:46
+#: contents/ui/configGeneral.qml:48
 msgid "Battery percentage"
 msgstr "Percentuale batteria"
 
-#: contents/ui/configGeneral.qml:47
+#: contents/ui/configGeneral.qml:49
 msgid "Signal icon"
 msgstr "Icona segnale"
 
-#: contents/ui/configGeneral.qml:48
+#: contents/ui/configGeneral.qml:50
 msgid "Signal percentage"
 msgstr "Percentuale segnale"
 
-#: contents/ui/configGeneral.qml:49
+#: contents/ui/configGeneral.qml:51
 msgid "Carrier"
 msgstr "Operatore"
 
-#: contents/ui/configGeneral.qml:50
+#: contents/ui/configGeneral.qml:52
 msgid "Title"
 msgstr "Titolo"
 
-#: contents/ui/configGeneral.qml:51
+#: contents/ui/configGeneral.qml:53
 msgid "Now playing"
 msgstr "Brano in riproduzione"
 
-#: contents/ui/configGeneral.qml:52
+#: contents/ui/configGeneral.qml:54
 msgid "New notification count"
 msgstr "Contatore notifiche nuove"
 
-#: contents/ui/configGeneral.qml:60
+#: contents/ui/configGeneral.qml:62
 msgid "Popup"
 msgstr "Popup"
 
-#: contents/ui/configGeneral.qml:64
+#: contents/ui/configGeneral.qml:66
 msgid "Tabs:"
 msgstr "Schede:"
 
-#: contents/ui/configGeneral.qml:68 contents/ui/main.qml:907
+#: contents/ui/configGeneral.qml:70 contents/ui/main.qml:1048
 msgid "Status"
 msgstr "Stato"
 
-#: contents/ui/configGeneral.qml:69 contents/ui/main.qml:908
+#: contents/ui/configGeneral.qml:71 contents/ui/main.qml:1049
 msgid "Notifications"
 msgstr "Notifiche"
 
-#: contents/ui/configGeneral.qml:70 contents/ui/main.qml:909
+#: contents/ui/configGeneral.qml:72 contents/ui/main.qml:1050
 msgid "Player"
 msgstr "Player"
 
-#: contents/ui/configGeneral.qml:71
+#: contents/ui/configGeneral.qml:73
 msgid "Recent calls"
 msgstr "Chiamate recenti"
 
-#: contents/ui/configGeneral.qml:78
+#: contents/ui/configGeneral.qml:80
 msgid "Status sections:"
 msgstr "Sezioni dello stato:"
 
-#: contents/ui/configGeneral.qml:82 contents/ui/StatusPage.qml:29
+#: contents/ui/configGeneral.qml:84 contents/ui/StatusPage.qml:29
 msgid "Battery"
 msgstr "Batteria"
 
-#: contents/ui/configGeneral.qml:83 contents/ui/StatusPage.qml:47
+#: contents/ui/configGeneral.qml:85 contents/ui/StatusPage.qml:47
 msgid "Cellular network"
 msgstr "Rete cellulare"
 
-#: contents/ui/configGeneral.qml:84 contents/ui/StatusPage.qml:56
+#: contents/ui/configGeneral.qml:86 contents/ui/StatusPage.qml:56
 msgid "Bluetooth"
 msgstr "Bluetooth"
 
-#: contents/ui/configGeneral.qml:92
+#: contents/ui/configGeneral.qml:94
+msgid "Clicking a notification:"
+msgstr "Clic su una notifica:"
+
+#: contents/ui/configGeneral.qml:96
+msgid "Opens the app, or else its web version"
+msgstr "Apre l'app, altrimenti la versione web"
+
+#: contents/ui/configGeneral.qml:97
+msgid "Opens the app only"
+msgstr "Apre solo l'app"
+
+#: contents/ui/configGeneral.qml:98
+msgid "Does nothing"
+msgstr "Non fa niente"
+
+#: contents/ui/configGeneral.qml:114
 msgid "Artwork:"
 msgstr "Copertine:"
 
-#: contents/ui/configGeneral.qml:93
+#: contents/ui/configGeneral.qml:115
 msgid "Look it up online on iTunes"
 msgstr "Cercale online su iTunes"
 
-#: contents/ui/configGeneral.qml:96
+#: contents/ui/configGeneral.qml:118
 msgid "The iPhone does not send artwork over Bluetooth. During AirPlay it comes from shairport-sync; otherwise the artist and title are looked up with the iTunes API."
 msgstr "Via Bluetooth l'iPhone non manda la copertina. Durante AirPlay arriva da shairport-sync; altrimenti si cerca artista e titolo sull'API di iTunes."
 
-#: contents/ui/configGeneral.qml:105
+#: contents/ui/configGeneral.qml:127
 msgid "Emoji font:"
 msgstr "Font delle emoji:"
 
-#: contents/ui/configGeneral.qml:128
+#: contents/ui/configGeneral.qml:150
 msgid "The network type (LTE, 5G…) is not available: the iPhone's Bluetooth hands-free profile does not report it."
 msgstr "Il tipo di rete (LTE, 5G…) non è disponibile: il profilo vivavoce Bluetooth dell'iPhone non lo trasmette."
 
-#: contents/ui/main.qml:65
+#: contents/ui/main.qml:67
 msgid "Reading the status…"
 msgstr "Lettura dello stato in corso…"
 
-#: contents/ui/main.qml:70
+#: contents/ui/main.qml:72
 msgid "iPhone not connected (%1)"
 msgstr "iPhone non connesso (%1)"
 
-#: contents/ui/main.qml:71
+#: contents/ui/main.qml:73
 msgid "iPhone not connected"
 msgstr "iPhone non connesso"
 
-#: contents/ui/main.qml:76 contents/ui/main.qml:791
+#: contents/ui/main.qml:78 contents/ui/main.qml:932
 msgid "%1 %"
 msgstr "%1 %"
 
-#: contents/ui/main.qml:82
+#: contents/ui/main.qml:84
 msgid "%1 % (%2/5)"
 msgstr "%1 % (%2/5)"
 
-#: contents/ui/main.qml:160
+#: contents/ui/main.qml:162
 msgid "%1 s"
 msgstr "%1 s"
 
-#: contents/ui/main.qml:160
+#: contents/ui/main.qml:162
 msgid "%1 min"
 msgstr "%1 min"
 
-#: contents/ui/main.qml:165
+#: contents/ui/main.qml:167
 msgid "probably charging, 1 % every %1"
 msgstr "probabilmente in carica, 1 % ogni %1"
 
-#: contents/ui/main.qml:166
+#: contents/ui/main.qml:168
 msgid "probably charging"
 msgstr "probabilmente in carica"
 
-#: contents/ui/main.qml:206
+#: contents/ui/main.qml:208
 msgid "AirPlay"
 msgstr "AirPlay"
 
-#: contents/ui/main.qml:208
+#: contents/ui/main.qml:210
 msgid "%1 · iPhone"
 msgstr "%1 · iPhone"
 
-#: contents/ui/main.qml:297
+#: contents/ui/main.qml:299
 msgid "now"
 msgstr "ora"
 
-#: contents/ui/main.qml:299
+#: contents/ui/main.qml:301
 msgid "%1 min ago"
 msgstr "%1 min fa"
 
-#: contents/ui/main.qml:307
+#: contents/ui/main.qml:309
 msgid "yesterday %1"
 msgstr "ieri %1"
 
-#: contents/ui/main.qml:320
+#: contents/ui/main.qml:322
 msgid "Registered"
 msgstr "Registrato"
 
-#: contents/ui/main.qml:321
+#: contents/ui/main.qml:323
 msgid "Roaming"
 msgstr "In roaming"
 
-#: contents/ui/main.qml:322
+#: contents/ui/main.qml:324
 msgid "Searching for a network…"
 msgstr "Ricerca rete…"
 
-#: contents/ui/main.qml:323
+#: contents/ui/main.qml:325
 msgid "Not registered"
 msgstr "Non registrato"
 
-#: contents/ui/main.qml:324
+#: contents/ui/main.qml:326
 msgid "Registration denied"
 msgstr "Registrazione negata"
 
-#: contents/ui/main.qml:325 contents/ui/main.qml:592 contents/ui/main.qml:615
+#: contents/ui/main.qml:327 contents/ui/main.qml:594 contents/ui/main.qml:617
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#: contents/ui/main.qml:333
+#: contents/ui/main.qml:335
 msgid "The gdbus command was not found"
 msgstr "Comando gdbus non trovato"
 
-#: contents/ui/main.qml:335
+#: contents/ui/main.qml:337
 msgid "BlueFerry is not running"
 msgstr "BlueFerry non è in esecuzione"
 
-#: contents/ui/main.qml:337
+#: contents/ui/main.qml:339
 msgid "BlueFerry is not responding"
 msgstr "BlueFerry non risponde"
 
-#: contents/ui/main.qml:339
+#: contents/ui/main.qml:341
 msgid "BlueFerry denied access to the status"
 msgstr "BlueFerry ha negato l'accesso allo stato"
 
-#: contents/ui/main.qml:341
+#: contents/ui/main.qml:343
 msgid "Error: %1"
 msgstr "Errore: %1"
 
-#: contents/ui/main.qml:341
+#: contents/ui/main.qml:343
 msgid "The command exited with code %1"
 msgstr "Il comando è terminato con codice %1"
 
-#: contents/ui/main.qml:429
+#: contents/ui/main.qml:431
 msgid "BlueFerry's answer could not be read"
 msgstr "Risposta di BlueFerry non leggibile"
 
-#: contents/ui/main.qml:434
+#: contents/ui/main.qml:436
 msgid "The BlueFerry daemon is not active"
 msgstr "Il daemon BlueFerry non è attivo"
 
-#: contents/ui/main.qml:609 contents/ui/main.qml:613
+#: contents/ui/main.qml:611 contents/ui/main.qml:615
 msgid "Messages"
 msgstr "Messaggi"
 
-#: contents/ui/main.qml:764
+#: contents/ui/main.qml:905
 msgid "Carrier: %1, Wi-Fi calling"
 msgstr "Operatore: %1, chiamate Wi-Fi"
 
-#: contents/ui/main.qml:765
+#: contents/ui/main.qml:906
 msgid "Carrier: %1"
 msgstr "Operatore: %1"
 
-#: contents/ui/main.qml:766
+#: contents/ui/main.qml:907
 msgid "Battery: %1, %2"
 msgstr "Batteria: %1, %2"
 
-#: contents/ui/main.qml:766
+#: contents/ui/main.qml:907
 msgid "Battery: %1"
 msgstr "Batteria: %1"
 
-#: contents/ui/main.qml:767
+#: contents/ui/main.qml:908
 msgid "Signal: %1"
 msgstr "Segnale: %1"
 
-#: contents/ui/main.qml:771
+#: contents/ui/main.qml:912
 msgid "%1 new notification"
 msgid_plural "%1 new notifications"
 msgstr[0] "%1 notifica nuova"
 msgstr[1] "%1 notifiche nuove"
 
-#: contents/ui/main.qml:910
+#: contents/ui/main.qml:1051
 msgid "Calls"
 msgstr "Chiamate"
 
-#: contents/ui/main.qml:951 contents/ui/StatusPage.qml:58
+#: contents/ui/main.qml:1092 contents/ui/StatusPage.qml:58
 msgid "Connected"
 msgstr "Connesso"
 
-#: contents/ui/main.qml:951 contents/ui/StatusPage.qml:58
+#: contents/ui/main.qml:1092 contents/ui/StatusPage.qml:58
 msgid "Disconnected"
 msgstr "Disconnesso"
 
-#: contents/ui/main.qml:960
+#: contents/ui/main.qml:1101
 msgid "Refresh"
 msgstr "Aggiorna"
 
@@ -320,11 +336,15 @@ msgstr "Cancella"
 msgid "Clear the app notifications (SMS stay in BlueFerry)"
 msgstr "Cancella le notifiche delle app (gli SMS restano in BlueFerry)"
 
-#: contents/ui/NotificationsPage.qml:143
+#: contents/ui/NotificationsPage.qml:136
+msgid "Clear, also on the iPhone"
+msgstr "Cancella, anche sull'iPhone"
+
+#: contents/ui/NotificationsPage.qml:172
 msgid "No notifications"
 msgstr "Nessuna notifica"
 
-#: contents/ui/NotificationsPage.qml:144
+#: contents/ui/NotificationsPage.qml:173
 msgid "SMS come from BlueFerry's history. App notifications show up here from the moment Plasma starts, because Plasma does not keep them."
 msgstr "Gli SMS arrivano dallo storico di BlueFerry. Le notifiche delle app compaiono qui da quando Plasma è avviato, perché Plasma non le conserva."
 

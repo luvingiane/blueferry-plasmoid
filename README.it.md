@@ -45,6 +45,15 @@ L'applet chiama l'API D-Bus di BlueFerry (bus di sessione, oggetto
 se l'iPhone è connesso; il telefono è considerato connesso quando BlueFerry
 riporta `bredr` o `le`.
 
+Cancellare una notifica nel plasmoide la cancella anche sull'iPhone, premendo
+il pulsante "Cancella" di BlueFerry (l'azione negativa ANCS); vale per le
+notifiche arrivate nella sessione corrente di Plasma e BlueFerry che hanno quel
+pulsante. Una notifica cancellata sull'iPhone sparisce dal plasmoide quando
+BlueFerry ritira il suo popup. Un clic apre l'app sul PC, o la versione web se
+manca (vedi le impostazioni). Le ultime 50 restano salvate anche dopo un
+riavvio di Plasma. Non si può rispondere: ANCS offre solo le azioni positiva e
+negativa dell'iPhone.
+
 Le notifiche delle app (ANCS) non sono nell'API: BlueFerry le manda a Plasma
 come transienti, che non restano nello storico. L'applet le copia dal modello
 delle notifiche di Plasma mentre compaiono, quindi la lista riparte vuota a
