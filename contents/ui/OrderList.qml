@@ -1,5 +1,5 @@
-// Una lista di elementi da mostrare o nascondere e da riordinare con le
-// frecce. Non salva niente: annuncia la nuova lista con edited().
+// A list of items to show or hide and reorder with the arrows. It saves
+// nothing: it announces the new list with edited().
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2

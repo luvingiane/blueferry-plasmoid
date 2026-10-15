@@ -6,27 +6,27 @@
   <kcfgfile name=""/>
 
   <group name="General">
-    <!-- Nome mostrato nel popup, nel tooltip e nel pannello; vuoto: "iPhone". -->
+    <!-- Name shown in the popup, the tooltip and the panel; empty: "iPhone". -->
     <entry name="title" type="String">
       <default></default>
     </entry>
-    <!-- Elementi del pannello in ordine; "-id" è nascosto (vedi order.js). -->
+    <!-- Panel items in order; "-id" is hidden (see order.js). -->
     <entry name="panelItems" type="StringList">
       <default>batteryIcon,batteryText,signalIcon,operator,-signalText,-title,-media,notifications</default>
     </entry>
-    <!-- Schede del popup in ordine; "-id" è nascosta. -->
+    <!-- Popup tabs in order; "-id" is hidden. -->
     <entry name="popupTabs" type="StringList">
       <default>status,notifications,player,calls</default>
     </entry>
-    <!-- Font per le emoji di notifiche, nomi e brani; vuoto: quello del tema. -->
+    <!-- Font for emoji in notifications, names and tracks; empty: the theme font. -->
     <entry name="emojiFont" type="String">
       <default>Apple Color Emoji</default>
     </entry>
-    <!-- Sezioni della scheda Stato in ordine; "-id" è nascosta. -->
+    <!-- Status tab sections in order; "-id" is hidden. -->
     <entry name="statusSections" type="StringList">
       <default>battery,network,bluetooth</default>
     </entry>
-    <!-- Cerca le copertine sull'API di iTunes quando AirPlay non le ha. -->
+    <!-- Look artwork up with the iTunes API when AirPlay has none. -->
     <entry name="onlineArtwork" type="Bool">
       <default>true</default>
     </entry>

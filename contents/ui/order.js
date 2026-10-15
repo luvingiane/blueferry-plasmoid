@@ -1,8 +1,8 @@
-// Ordine e visibilità degli elementi, condivisi da main.qml e dalle impostazioni.
+// Order and visibility of items, shared by main.qml and the settings.
 //
-// Ogni lista è salvata come StringList: "id" per un elemento mostrato, "-id"
-// per uno nascosto, nell'ordine scelto. Gli id sconosciuti vengono scartati e
-// quelli mancanti (aggiunti in versioni successive) finiscono in fondo, nascosti.
+// Each list is stored as a StringList: "id" for a shown item, "-id" for a
+// hidden one, in the chosen order. Unknown ids are dropped and missing ones
+// (added in later versions) go to the end, hidden.
 .pragma library
 
 const PANEL_IDS = ["batteryIcon", "batteryText", "signalIcon", "signalText", "operator", "title", "media", "notifications"]

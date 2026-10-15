@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blueferry-plasmoid\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-15 15:45+0200\n"
+"POT-Creation-Date: 2026-10-15 16:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgid "Title:"
 msgstr ""
 
 #: contents/ui/configGeneral.qml:32 contents/ui/main.qml:36
-#: contents/ui/main.qml:126
+#: contents/ui/main.qml:155
 msgid "iPhone"
 msgstr ""
 
@@ -99,15 +99,15 @@ msgstr ""
 msgid "Tabs:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:68 contents/ui/main.qml:794
+#: contents/ui/configGeneral.qml:68 contents/ui/main.qml:828
 msgid "Status"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:69 contents/ui/main.qml:795
+#: contents/ui/configGeneral.qml:69 contents/ui/main.qml:829
 msgid "Notifications"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:70 contents/ui/main.qml:796
+#: contents/ui/configGeneral.qml:70 contents/ui/main.qml:830
 msgid "Player"
 msgstr ""
 
@@ -123,11 +123,11 @@ msgstr ""
 msgid "Battery"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:83 contents/ui/StatusPage.qml:43
+#: contents/ui/configGeneral.qml:83 contents/ui/StatusPage.qml:45
 msgid "Cellular network"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:84 contents/ui/StatusPage.qml:52
+#: contents/ui/configGeneral.qml:84 contents/ui/StatusPage.qml:54
 msgid "Bluetooth"
 msgstr ""
 
@@ -147,7 +147,7 @@ msgstr ""
 msgid "Emoji font:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:127
+#: contents/ui/configGeneral.qml:128
 msgid "The network type (LTE, 5G…) is not available: the iPhone's Bluetooth hands-free profile does not report it."
 msgstr ""
 
@@ -163,7 +163,7 @@ msgstr ""
 msgid "iPhone not connected"
 msgstr ""
 
-#: contents/ui/main.qml:76 contents/ui/main.qml:686
+#: contents/ui/main.qml:76 contents/ui/main.qml:720
 msgid "%1 %"
 msgstr ""
 
@@ -171,117 +171,121 @@ msgstr ""
 msgid "%1 % (%2/5)"
 msgstr ""
 
-#: contents/ui/main.qml:124
+#: contents/ui/main.qml:153
 msgid "AirPlay"
 msgstr ""
 
-#: contents/ui/main.qml:126
+#: contents/ui/main.qml:155
 msgid "%1 · iPhone"
 msgstr ""
 
-#: contents/ui/main.qml:213
+#: contents/ui/main.qml:244
 msgid "now"
 msgstr ""
 
-#: contents/ui/main.qml:215
+#: contents/ui/main.qml:246
 msgid "%1 min ago"
 msgstr ""
 
-#: contents/ui/main.qml:223
+#: contents/ui/main.qml:254
 msgid "yesterday %1"
 msgstr ""
 
-#: contents/ui/main.qml:236
+#: contents/ui/main.qml:267
 msgid "Registered"
 msgstr ""
 
-#: contents/ui/main.qml:237
+#: contents/ui/main.qml:268
 msgid "Roaming"
 msgstr ""
 
-#: contents/ui/main.qml:238
+#: contents/ui/main.qml:269
 msgid "Searching for a network…"
 msgstr ""
 
-#: contents/ui/main.qml:239
+#: contents/ui/main.qml:270
 msgid "Not registered"
 msgstr ""
 
-#: contents/ui/main.qml:240
+#: contents/ui/main.qml:271
 msgid "Registration denied"
 msgstr ""
 
-#: contents/ui/main.qml:241 contents/ui/main.qml:492 contents/ui/main.qml:515
+#: contents/ui/main.qml:272 contents/ui/main.qml:525 contents/ui/main.qml:548
 msgid "Unknown"
 msgstr ""
 
-#: contents/ui/main.qml:249
+#: contents/ui/main.qml:280
 msgid "The gdbus command was not found"
 msgstr ""
 
-#: contents/ui/main.qml:251
+#: contents/ui/main.qml:282
 msgid "BlueFerry is not running"
 msgstr ""
 
-#: contents/ui/main.qml:253
+#: contents/ui/main.qml:284
 msgid "BlueFerry is not responding"
 msgstr ""
 
-#: contents/ui/main.qml:255
+#: contents/ui/main.qml:286
 msgid "BlueFerry denied access to the status"
 msgstr ""
 
-#: contents/ui/main.qml:257
+#: contents/ui/main.qml:288
 msgid "Error: %1"
 msgstr ""
 
-#: contents/ui/main.qml:257
+#: contents/ui/main.qml:288
 msgid "The command exited with code %1"
 msgstr ""
 
-#: contents/ui/main.qml:337
+#: contents/ui/main.qml:369
 msgid "BlueFerry's answer could not be read"
 msgstr ""
 
-#: contents/ui/main.qml:342
+#: contents/ui/main.qml:374
 msgid "The BlueFerry daemon is not active"
 msgstr ""
 
-#: contents/ui/main.qml:509 contents/ui/main.qml:513
+#: contents/ui/main.qml:542 contents/ui/main.qml:546
 msgid "Messages"
 msgstr ""
 
-#: contents/ui/main.qml:661
+#: contents/ui/main.qml:694
 msgid "Carrier: %1"
 msgstr ""
 
-#: contents/ui/main.qml:661
+#: contents/ui/main.qml:695
+msgid "Battery: %1, probably charging"
+msgstr ""
+
+#: contents/ui/main.qml:695
 msgid "Battery: %1"
 msgstr ""
 
-#: contents/ui/main.qml:662
+#: contents/ui/main.qml:696
 msgid "Signal: %1"
 msgstr ""
 
-#: contents/ui/main.qml:666
+#: contents/ui/main.qml:700
 msgid "%1 new notification"
 msgid_plural "%1 new notifications"
 msgstr[0] ""
 msgstr[1] ""
 
-#: contents/ui/main.qml:797
+#: contents/ui/main.qml:831
 msgid "Calls"
 msgstr ""
 
-#: contents/ui/main.qml:838 contents/ui/StatusPage.qml:54
+#: contents/ui/main.qml:872 contents/ui/StatusPage.qml:56
 msgid "Connected"
 msgstr ""
 
-#: contents/ui/main.qml:838 contents/ui/StatusPage.qml:54
+#: contents/ui/main.qml:872 contents/ui/StatusPage.qml:56
 msgid "Disconnected"
 msgstr ""
 
-#: contents/ui/main.qml:847
+#: contents/ui/main.qml:881
 msgid "Refresh"
 msgstr ""
 
@@ -379,11 +383,15 @@ msgstr ""
 msgid "Hands-free, in 20 % steps"
 msgstr ""
 
-#: contents/ui/StatusPage.qml:44
+#: contents/ui/StatusPage.qml:33
+msgid "%1 · probably charging"
+msgstr ""
+
+#: contents/ui/StatusPage.qml:46
 msgid "%1/5"
 msgstr ""
 
-#: contents/ui/StatusPage.qml:138
+#: contents/ui/StatusPage.qml:140
 msgid "Updated at %1"
 msgstr ""
 

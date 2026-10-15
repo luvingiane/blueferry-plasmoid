@@ -1,5 +1,5 @@
-// La scheda Chiamate: le ultime chiamate dell'iPhone (rubrica PBAP tramite
-// BlueFerry), con la foto del contatto quando BlueFerry la conserva.
+// The Calls tab: the iPhone's recent calls (PBAP phone book through BlueFerry),
+// with the contact's photo when BlueFerry keeps one.
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
@@ -56,7 +56,7 @@ Item {
                 contentItem: RowLayout {
                     spacing: Kirigami.Units.largeSpacing
 
-                    // Foto del contatto, oppure le sue iniziali.
+                    // The contact's photo, or their initials.
                     Avatar {
                         source: entry.photo
                         name: entry.name

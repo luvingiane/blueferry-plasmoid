@@ -1,5 +1,5 @@
-// Un'immagine con gli angoli arrotondati (un cerchio con radius pari a metà
-// del lato). Il ritaglio usa QtQuick.Effects di Qt, senza dipendenze extra.
+// An image with rounded corners (a circle with radius set to half the side).
+// The clipping uses Qt's QtQuick.Effects, with no extra dependency.
 import QtQuick
 import QtQuick.Effects
 

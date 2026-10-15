@@ -1,6 +1,6 @@
-// La scheda Stato: batteria, rete cellulare e Bluetooth come sezioni nello
-// stile dell'applet Batteria di Plasma (icona, titolo e valore, barra,
-// dettaglio), nell'ordine scelto nelle impostazioni.
+// The Status tab: battery, cellular network and Bluetooth as sections in the
+// style of Plasma's Battery applet (icon, title and value, bar, detail), in the
+// order chosen in the settings.
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
@@ -20,7 +20,7 @@ Item {
         }
     }
 
-    // {icon, title, value, progress (0-100, o -1 senza barra), detail}
+    // {icon, title, value, progress (0-100, or -1 without a bar), detail}
     function section(id) {
         switch (id) {
         case "battery":
@@ -29,7 +29,9 @@ Item {
                 title: i18n("Battery"),
                 value: applet.batteryText,
                 progress: applet.active && applet.batteryLevel !== null ? applet.batteryLevel : -1,
-                detail: applet.active ? batterySourceText(applet.batterySource) : ""
+                detail: !applet.active ? ""
+                    : applet.charging ? i18n("%1 · probably charging", batterySourceText(applet.batterySource))
+                    : batterySourceText(applet.batterySource)
             }
         case "network": {
             const parts = []

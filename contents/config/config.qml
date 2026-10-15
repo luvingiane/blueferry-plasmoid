@@ -1,4 +1,4 @@
-// Le pagine della finestra delle impostazioni.
+// The pages of the settings window.
 import QtQuick
 import org.kde.plasma.configuration
 

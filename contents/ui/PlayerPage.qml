@@ -1,7 +1,7 @@
-// La scheda Player, nello stile del lettore multimediale di Plasma: sfondo
-// con la copertina sfocata, copertina, titolo, avanzamento e comandi. Il brano
-// viene dall'iPhone (Apple Media Service tramite BlueFerry) o da AirPlay
-// (shairport-sync); la copertina da shairport-sync o dalla ricerca di iTunes.
+// The Player tab, in the style of Plasma's media player: blurred artwork
+// background, artwork, title, progress and controls. The track comes from the
+// iPhone (Apple Media Service through BlueFerry) or from AirPlay
+// (shairport-sync); the artwork from shairport-sync or the iTunes search.
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
@@ -20,9 +20,9 @@ Item {
     readonly property real artSize: Math.max(Kirigami.Units.gridUnit * 5,
         Math.min(width - Kirigami.Units.gridUnit * 6, height * 0.38))
 
-    // Un componente inline non vede gli id del file: l'applet gli arriva
-    // come proprietà. Se BlueFerry non ha ancora la lista dei comandi
-    // dell'iPhone il pulsante resta attivo e il comando si prova comunque.
+    // An inline component cannot see the file's ids: the applet comes in as a
+    // property. While BlueFerry has no list of the iPhone's commands yet, the
+    // button stays enabled and the command is tried anyway.
     component MediaButton: PlasmaComponents.ToolButton {
         required property var applet
         property string command
@@ -38,7 +38,7 @@ Item {
         PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
     }
 
-    // Sfondo: la copertina sfocata e attenuata.
+    // Background: the artwork, blurred and dimmed.
     Item {
         anchors.fill: parent
         clip: true

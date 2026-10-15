@@ -1,6 +1,5 @@
-// La foto rotonda di un contatto, oppure le sue iniziali su un colore che
-// dipende dal nome. Kirigami.Avatar in KF6 sta in Kirigami Addons, che non
-// fa parte di Plasma.
+// A contact's round photo, or their initials on a colour derived from the name.
+// In KF6 Kirigami.Avatar lives in Kirigami Addons, which is not part of Plasma.
 import QtQuick
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
@@ -14,7 +13,7 @@ Item {
 
     readonly property string initials: Util.initials(name)
 
-    // Una tinta stabile per nome, come fanno le rubriche.
+    // A stable tint per name, as address books do.
     readonly property color tint: {
         let hash = 0
         for (let i = 0; i < name.length; ++i)

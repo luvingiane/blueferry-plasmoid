@@ -1,5 +1,5 @@
-// La pagina delle impostazioni: il titolo e quali elementi mostrare, e in che
-// ordine, nel pannello e nel popup.
+// The settings page: the title and which items to show, and in what order, in
+// the panel and the popup.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
@@ -17,7 +17,7 @@ KCM.SimpleKCM {
     property var cfg_popupTabs: []
     property string cfg_emojiFont
 
-    // Plasma passa alla pagina anche i valori predefiniti.
+    // Plasma also hands the page every default value.
     property string cfg_titleDefault
     property var cfg_panelItemsDefault: []
     property var cfg_statusSectionsDefault: []
@@ -104,7 +104,8 @@ KCM.SimpleKCM {
             id: emojiFont
             Kirigami.FormData.label: i18n("Emoji font:")
             editable: true
-            // I font installati con "emoji" nel nome, più quello scelto.
+            // The installed fonts with "emoji" in their name, plus the chosen
+            // one.
             model: {
                 const fonts = Qt.fontFamilies().filter(name => /emoji/i.test(name))
                 if (page.cfg_emojiFont !== "" && fonts.indexOf(page.cfg_emojiFont) < 0)

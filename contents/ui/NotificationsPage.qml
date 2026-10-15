@@ -1,6 +1,6 @@
-// La scheda Notifiche, nello stile del centro notifiche dell'iPhone: icona
-// dell'app a sinistra, titolo in grassetto con l'ora, testo sotto. Gli SMS
-// vengono dallo storico di BlueFerry, le altre dal modello di Plasma.
+// The Notifications tab, in the style of the iPhone's notification centre: app
+// icon on the left, bold title with the time, text below. SMS come from
+// BlueFerry's history, everything else from Plasma's model.
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
@@ -68,8 +68,8 @@ Item {
                         anchors.margins: Kirigami.Units.largeSpacing
                         spacing: Kirigami.Units.largeSpacing
 
-                        // Icona dell'app; senza corrispondenza nel tema, la
-                        // campanella col telefono in basso a destra.
+                        // App icon; without a match in the theme, the bell with
+                        // the phone in the bottom right corner.
                         Item {
                             Layout.preferredWidth: Kirigami.Units.iconSizes.large
                             Layout.preferredHeight: Kirigami.Units.iconSizes.large

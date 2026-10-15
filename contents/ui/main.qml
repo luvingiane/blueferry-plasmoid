@@ -1,12 +1,12 @@
-// Stato iPhone: batteria, segnale, notifiche, player e chiamate recenti
-// dell'iPhone, letti da BlueFerry.
+// iPhone Status: the iPhone's battery, signal, notifications, player and recent
+// calls, read from BlueFerry.
 //
-// Tutto passa dall'API D-Bus di BlueFerry (bus di sessione, oggetto
-// /io/weirdware/BlueFerry), chiamata con gdbus: GetStatus per batteria e rete,
-// GetNowPlaying e SendMediaCommand per il player, ListCallHistory e
-// GetContactPhoto per le chiamate, ListEvents per gli SMS. Le notifiche delle
-// app arrivano a Plasma da BlueFerry come transienti e non restano nello
-// storico: l'applet le copia dal modello delle notifiche mentre compaiono.
+// Everything goes through BlueFerry's D-Bus API (session bus, object
+// /io/weirdware/BlueFerry), called with gdbus: GetStatus for battery and
+// network, GetNowPlaying and SendMediaCommand for the player, ListCallHistory
+// and GetContactPhoto for calls, ListEvents for SMS. BlueFerry sends app
+// notifications to Plasma as transient ones that do not stay in the history:
+// the applet copies them from the notification model as they appear.
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.plasmoid
@@ -22,9 +22,9 @@ import "util.js" as Util
 PlasmoidItem {
     id: root
 
-    // LC_ALL=C: i messaggi di errore di gdbus restano in inglese, così si
-    // possono riconoscere. Il timeout evita che una chiamata bloccata
-    // sovrapponga i cicli di polling.
+    // LC_ALL=C keeps gdbus error messages in English, so they can be
+    // recognised. The timeout stops a stuck call from overlapping the polling
+    // cycles.
     readonly property string gdbusCall: "LC_ALL=C gdbus call --session --timeout 5"
         + " --dest io.weirdware.BlueFerry --object-path /io/weirdware/BlueFerry"
         + " --method io.weirdware.BlueFerry."
@@ -40,26 +40,26 @@ PlasmoidItem {
     readonly property var popupTabs: Order.shown(Plasmoid.configuration.popupTabs, Order.TAB_IDS)
     readonly property bool onlineArtwork: Plasmoid.configuration.onlineArtwork
 
-    // --- Stato del telefono (GetStatus) -----------------------------------
+    // --- Phone status (GetStatus) ----------------------------------------
 
     property bool loaded: false
-    property string error: ""            // non vuoto: comando fallito o daemon spento
-    property bool connected: false       // BR/EDR o LE dell'iPhone collegati
+    property string error: ""            // not empty: the command failed or the daemon is off
+    property bool connected: false       // the iPhone's BR/EDR or LE link is up
     property string connectivityDetail: ""
-    property bool callsEnabled: false    // chiamate HFP attive in BlueFerry
+    property bool callsEnabled: false    // HFP calls are on in BlueFerry
     property date lastUpdate
 
-    // Le chiavi phone_* di GetStatus; null quando sconosciute.
+    // GetStatus's phone_* keys; null when unknown.
     property var batteryLevel: null
     property var batterySource: null     // "gatt", "bluez" o "hfp"
-    property var signalStrength: null    // 0-100, in passi di 20 via HFP
+    property var signalStrength: null    // 0-100, in steps of 20 over HFP
     property var networkName: null
     property var networkStatus: null
 
-    // Telefono raggiungibile e dati validi.
+    // Phone reachable and data valid.
     readonly property bool active: loaded && error === "" && connected
 
-    // Perché l'icona è disattivata; vuoto quando è tutto a posto.
+    // Why the icon is dimmed; empty when all is well.
     readonly property string reason: {
         if (!loaded)
             return i18n("Reading the status…")
@@ -75,7 +75,7 @@ PlasmoidItem {
     readonly property string batteryText: batteryLevel === null ? dash
         : (batterySource === "hfp" ? "~" : "") + i18n("%1 %", batteryLevel)
 
-    // 0-100 → 0-5 tacche; -1 se sconosciuto.
+    // 0-100 → 0-5 bars; -1 when unknown.
     readonly property int signalBars: signalStrength === null ? -1
         : Math.max(0, Math.min(5, Math.round(signalStrength / 20)))
     readonly property string signalText: signalBars < 0 ? dash
@@ -83,35 +83,64 @@ PlasmoidItem {
 
     readonly property string networkText: networkName === null || networkName === "" ? dash : networkName
 
+    // The iPhone does not report whether it is charging (its Battery Service
+    // only has Battery Level, and HFP only the level), so it is estimated: a
+    // level that rises between two exact LE readings means charging, one that
+    // drops means not. Unchanged levels keep the last verdict, which covers a
+    // phone held at 100 % on the charger.
+    property bool charging: false
+    property var lastExactLevel: null
+    property var lastExactSource: null
+
+    function estimateCharging() {
+        const exact = active && batteryLevel !== null && (batterySource === "gatt" || batterySource === "bluez")
+        if (!exact) {
+            charging = false
+            lastExactLevel = null
+            lastExactSource = null
+            return
+        }
+        // A new source (BlueZ's cached value against the live GATT one) is
+        // not comparable with the previous reading.
+        if (lastExactLevel !== null && lastExactSource === batterySource) {
+            if (batteryLevel > lastExactLevel)
+                charging = true
+            else if (batteryLevel < lastExactLevel)
+                charging = false
+        }
+        lastExactLevel = batteryLevel
+        lastExactSource = batterySource
+    }
+
     readonly property string batteryIcon: {
         if (!active || batteryLevel === null)
             return "battery-missing"
         const step = Math.max(0, Math.min(100, Math.round(batteryLevel / 10) * 10))
-        return "battery-" + String(step).padStart(3, "0")
+        return "battery-" + String(step).padStart(3, "0") + (charging ? "-charging" : "")
     }
     readonly property string signalIcon: !active || signalBars < 0
         ? "network-mobile-off" : "network-mobile-" + (signalBars * 20)
 
-    // --- Player (GetNowPlaying) -------------------------------------------
+    // --- Player (GetNowPlaying) ------------------------------------------
 
-    property var nowPlaying: null        // la risposta di GetNowPlaying
-    property double mediaFetchedAt: 0    // quando è arrivata, in ms
-    property double clock: Date.now()    // avanza ogni secondo durante la riproduzione
+    property var nowPlaying: null        // the GetNowPlaying answer
+    property double mediaFetchedAt: 0    // when it arrived, in ms
+    property double clock: Date.now()    // ticks every second during playback
 
-    // Il brano dell'iPhone via Bluetooth (AMS): titolo, artista, album, durata.
+    // The iPhone's track over Bluetooth (AMS): title, artist, album, duration.
     readonly property var amsTrack: nowPlaying && nowPlaying.available === true && nowPlaying.track
         ? nowPlaying.track : null
     readonly property bool amsPlaying: amsTrack !== null && !!nowPlaying.player
         && nowPlaying.player.state === "playing"
 
-    // shairport-sync (AirPlay verso questo computer), letto via MPRIS:
-    // {status, title, artist, album, art, length} o null.
+    // shairport-sync (AirPlay to this computer), read over MPRIS: {status,
+    // title, artist, album, art, length} or null.
     property var airplay: null
     readonly property bool airplayPlaying: !!airplay && airplay.status === "Playing"
     readonly property bool airplaySameTrack: !!airplay && amsTrack !== null
         && Util.sameTitle(airplay.title, amsTrack.title)
-    // AirPlay suona un brano diverso da quello che AMS riporta (per esempio
-    // un'altra app): si mostra quello.
+    // AirPlay plays a different track from the one AMS reports (another app,
+    // for instance): that one is shown.
     readonly property bool showAirplay: airplayPlaying && !amsPlaying && !airplaySameTrack
         && airplay.title !== ""
 
@@ -126,7 +155,8 @@ PlasmoidItem {
             ? i18n("%1 · iPhone", nowPlaying.player.name) : i18n("iPhone")
     readonly property var mediaCommands: nowPlaying && nowPlaying.supported_commands ? nowPlaying.supported_commands : []
     readonly property real mediaDuration: track && typeof track.duration === "number" ? track.duration : 0
-    // AMS dà il tempo trascorso; shairport-sync no, quindi senza AMS niente barra.
+    // AMS gives the elapsed time; shairport-sync does not, so without AMS there
+    // is no bar.
     readonly property bool mediaHasProgress: !showAirplay && !!amsTrack && typeof amsTrack.elapsed === "number"
         && mediaDuration > 0
     readonly property real mediaElapsed: {
@@ -139,8 +169,8 @@ PlasmoidItem {
     readonly property string mediaText: !mediaAvailable ? ""
         : [track.title, track.artist].filter(part => !!part).join(" – ")
 
-    // Copertina: quella di shairport-sync se è lo stesso brano, altrimenti la
-    // ricerca su iTunes (se attiva); "" senza copertina.
+    // Artwork: shairport-sync's when it is the same track, otherwise the iTunes
+    // search (when enabled); "" without artwork.
     property var artworkCache: ({})      // "artista|titolo" → URL, "" se assente
     readonly property string artworkKey: track ? (track.artist || "") + "|" + (track.title || "") : ""
     readonly property string artwork: {
@@ -151,31 +181,31 @@ PlasmoidItem {
     onArtworkKeyChanged: fetchArtwork()
     onOnlineArtworkChanged: fetchArtwork()
 
-    // L'ultimo errore di un comando del player, mostrato per qualche secondo.
+    // The last error of a player command, shown for a few seconds.
     property string mediaError: ""
 
-    // --- Chiamate recenti (ListCallHistory, GetContactPhoto) ---------------
+    // --- Recent calls (ListCallHistory, GetContactPhoto) -----------------
 
     property var calls: []               // [{direction, timestamp, address, name, contact_name}]
-    property var photos: ({})            // numero → data URI, "" se senza foto
+    property var photos: ({})            // number → data URI, "" without a photo
     property var photoQueue: []
     property bool photoBusy: false
 
-    // --- Notifiche: SMS (ListEvents) e app (modello di Plasma) -------------
+    // --- Notifications: SMS (ListEvents) and apps (Plasma's model) -------
 
     property var messages: []            // [{kind, app, title, body, time}]
-    property var appNotifications: []    // stesse chiavi, più id
-    property int unseen: 0               // arrivate dall'ultima apertura del popup
+    property var appNotifications: []    // same keys, plus id
+    property int unseen: 0               // arrived since the popup was last opened
 
     readonly property var notifications: messages.concat(appNotifications)
         .sort((a, b) => b.time - a.time)
 
-    // Nome dell'app → icona del tema, "" se il tema non ne ha una.
+    // App name → theme icon, "" when the theme has none.
     property var appIcons: ({})
 
-    // Cerca nel tema d'icone, una volta per app, il primo nome candidato che
-    // esiste. Kirigami.Icon dichiara valida anche un'icona inesistente, quindi
-    // decide kiconfinder6 (KIconThemes, parte di KDE Frameworks).
+    // Looks in the icon theme, once per app, for the first candidate name that
+    // exists. Kirigami.Icon reports even a missing icon as valid, so
+    // kiconfinder6 (KIconThemes, part of KDE Frameworks) decides.
     function ensureAppIcon(name) {
         const key = String(name || "")
         if (key === "" || appIcons[key] !== undefined)
@@ -197,13 +227,14 @@ PlasmoidItem {
         })
     }
 
-    // --- Testo ------------------------------------------------------------
+    // --- Text ------------------------------------------------------------
 
     function styled(text) {
         return Util.styled(text, emojiFont)
     }
 
-    // "ora", "5 min fa", "14:32", "ieri 14:32", "lun 14:32" o "12/10/26".
+    // "now", "5 min ago", "14:32", "yesterday 14:32", "Mon 14:32" or
+    // "12/10/26".
     function timeText(date) {
         if (!(date instanceof Date) || isNaN(date.getTime()))
             return ""
@@ -257,12 +288,12 @@ PlasmoidItem {
         return line !== "" ? i18n("Error: %1", line) : i18n("The command exited with code %1", exitCode)
     }
 
-    // --- Esecuzione dei comandi -------------------------------------------
+    // --- Running commands ------------------------------------------------
 
-    // Il motore "executable" è unico per tutto plasmashell e identifica le
-    // sorgenti dal testo del comando. Il commento finale con l'id dell'applet
-    // e un contatore dà a ogni chiamata una sorgente sua: altrimenti due copie
-    // dell'applet, o due chiamate uguali, si contendono la stessa esecuzione.
+    // The "executable" engine is shared by all of plasmashell and identifies
+    // sources by the command text. The trailing comment with the applet id and
+    // a counter gives every call its own source: otherwise two copies of the
+    // applet, or two identical calls, would compete for the same run.
     property var pending: ({})
     property int sequence: 0
 
@@ -273,13 +304,13 @@ PlasmoidItem {
         executable.connectSource(source)
     }
 
-    // Un metodo di BlueFerry; args è già pronto per la shell.
+    // A BlueFerry method; args is already shell-ready.
     function call(method, args, callback) {
         run(gdbusCall + method + (args ? " " + args : ""), callback)
     }
 
-    // Una stringa per gdbus: letterale GVariant tra virgolette, poi quotata
-    // per la shell. Va usata solo con testo già validato.
+    // A string for gdbus: a quoted GVariant literal, then quoted for the shell.
+    // Use it only with text that was already validated.
     function gvariantArg(text) {
         return Util.shellQuote('"' + text + '"')
     }
@@ -289,8 +320,8 @@ PlasmoidItem {
         engine: "executable"
         connectedSources: []
         onNewData: (source, data) => {
-            // Un aggiornamento senza codice di uscita arriva prima che il
-            // processo sia finito: si aspetta il risultato vero.
+            // An update without an exit code arrives before the process has
+            // finished: wait for the real result.
             if (data["exit code"] === undefined)
                 return
             disconnectSource(source)
@@ -301,7 +332,7 @@ PlasmoidItem {
         }
     }
 
-    // --- Lettura dei dati -------------------------------------------------
+    // --- Reading the data ------------------------------------------------
 
     property bool statusBusy: false
     property bool mediaBusy: false
@@ -321,6 +352,7 @@ PlasmoidItem {
         networkStatus = null
         connected = false
         connectivityDetail = ""
+        estimateCharging()
     }
 
     function applyStatus(exitCode, stdout, stderr) {
@@ -351,6 +383,7 @@ PlasmoidItem {
         signalStrength = typeof status.phone_signal_strength === "number" ? status.phone_signal_strength : null
         networkName = nullable(status.phone_network_name)
         networkStatus = nullable(status.phone_network_status)
+        estimateCharging()
     }
 
     function refreshStatus() {
@@ -377,8 +410,8 @@ PlasmoidItem {
         refreshAirplay()
     }
 
-    // shairport-sync espone su MPRIS il brano in AirPlay con la copertina in
-    // un file della sua cache.
+    // shairport-sync exposes the AirPlay track over MPRIS, with the artwork in
+    // a file of its cache.
     function refreshAirplay() {
         if (airplayBusy)
             return
@@ -398,14 +431,14 @@ PlasmoidItem {
                 title: Util.gvariantField(out, "xesam:title"),
                 artist: Util.gvariantField(out, "xesam:artist"),
                 album: Util.gvariantField(out, "xesam:album"),
-                // Solo i file della cache di shairport-sync.
+                // Only files in shairport-sync's cache.
                 art: art.startsWith("file:///tmp/shairport-sync/") ? art : "",
                 length: isNaN(length) ? 0 : length / 1000000
             }
         })
     }
 
-    // La copertina dall'API di ricerca di iTunes, una richiesta per brano.
+    // The artwork from the iTunes search API, one request per track.
     function fetchArtwork() {
         if (!onlineArtwork || !track || !track.title || artworkCache[artworkKey] !== undefined)
             return
@@ -415,7 +448,7 @@ PlasmoidItem {
             next[key] = url
             artworkCache = next
         }
-        remember("")   // segna la richiesta come fatta, anche se fallisce
+        remember("")   // marks the request as done, even if it fails
         const country = (Qt.locale().name.split("_")[1] || "US").toLowerCase()
         const request = new XMLHttpRequest()
         request.onreadystatechange = () => {
@@ -434,8 +467,8 @@ PlasmoidItem {
         request.send()
     }
 
-    // Un comando del player. Se BlueFerry non ha ancora la lista dei comandi
-    // dell'iPhone si prova comunque: l'eventuale rifiuto compare nel popup.
+    // A player command. While BlueFerry has no list of the iPhone's commands
+    // yet it is tried anyway: a refusal shows up in the popup.
     function mediaCommand(command) {
         if (mediaCommands.length > 0 && mediaCommands.indexOf(command) < 0
                 && !(command === "toggle" && mediaCommands.indexOf(amsPlaying ? "pause" : "play") >= 0))
@@ -469,7 +502,7 @@ PlasmoidItem {
         })
     }
 
-    // Una foto alla volta: sono risposte da qualche centinaio di KB.
+    // One photo at a time: the answers are a few hundred KB each.
     function fetchNextPhoto() {
         if (photoBusy || photoQueue.length === 0)
             return
@@ -477,8 +510,8 @@ PlasmoidItem {
         photoBusy = true
         call("Messages1.GetContactPhoto", gvariantArg(address), (code, out) => {
             photoBusy = false
-            // Un errore (foto in aggiornamento) lascia il numero da riprovare
-            // al prossimo giro.
+            // An error (photos being updated) leaves the number to retry on the
+            // next round.
             if (code === 0) {
                 const next = Object.assign({}, photos)
                 next[address] = Util.imageUri(Util.gvariantBytes(out))
@@ -521,25 +554,25 @@ PlasmoidItem {
         })
     }
 
-    // --- Notifiche delle app, dal modello di Plasma -----------------------
+    // --- App notifications, from Plasma's model --------------------------
 
-    // Testo semplice da quello (eventualmente HTML) del modello, senza i
-    // caratteri invisibili che BlueFerry rende come "�".
+    // Plain text from the model's (possibly HTML) text, without the invisible
+    // characters that BlueFerry renders as "�".
     function plainText(text) {
         return Util.cleanText(String(text || "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]*>/g, "")
             .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
             .replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&"))
     }
 
-    readonly property string phoneMark: "📱"   // 📱, prefisso dei titoli ANCS
+    readonly property string phoneMark: "📱"   // 📱, prefix of ANCS titles
 
     function captureNotification(row) {
         const index = notificationModel.index(row, 0)
         const role = which => notificationModel.data(index, which)
         if (role(NotificationManager.Notifications.ApplicationNameRole) !== "BlueFerry")
             return
-        // BlueFerry intitola le notifiche delle app "📱 App · Titolo"; SMS e
-        // chiamate perse arrivano già dalle sue liste.
+        // BlueFerry titles app notifications "📱 App · Title"; SMS and missed
+        // calls already come from its own lists.
         const summary = plainText(role(NotificationManager.Notifications.SummaryRole))
         if (!summary.startsWith(phoneMark))
             return
@@ -589,7 +622,7 @@ PlasmoidItem {
         }
     }
 
-    // --- Tempi ------------------------------------------------------------
+    // --- Timers ----------------------------------------------------------
 
     Timer {
         interval: 10000
@@ -619,7 +652,7 @@ PlasmoidItem {
         triggeredOnStart: true
         onTriggered: root.refreshMessages()
     }
-    // Fa avanzare la barra del brano tra una lettura e l'altra.
+    // Moves the track's progress bar between two reads.
     Timer {
         interval: 1000
         running: root.playing
@@ -658,7 +691,8 @@ PlasmoidItem {
     toolTipSubText: {
         if (!active)
             return reason
-        const lines = [i18n("Carrier: %1", networkText), i18n("Battery: %1", batteryText),
+        const lines = [i18n("Carrier: %1", networkText), charging
+            ? i18n("Battery: %1, probably charging", batteryText) : i18n("Battery: %1", batteryText),
             i18n("Signal: %1", signalText)]
         if (mediaText !== "")
             lines.push((playing ? "▶ " : "⏸ ") + mediaText)
@@ -667,7 +701,7 @@ PlasmoidItem {
         return lines.join("\n")
     }
 
-    // --- Pannello ---------------------------------------------------------
+    // --- Panel -----------------------------------------------------------
 
     function panelIcon(id) {
         switch (id) {
@@ -692,8 +726,8 @@ PlasmoidItem {
         }
     }
 
-    // Elementi del pannello visibili adesso: i testi spariscono senza dati, e
-    // se non resta niente un'icona del telefono tiene l'applet cliccabile.
+    // Panel items visible right now: texts disappear without data, and when
+    // nothing is left a phone icon keeps the applet clickable.
     readonly property var panelVisible: {
         const items = panelItems.filter(id => {
             switch (id) {
@@ -744,8 +778,8 @@ PlasmoidItem {
                     readonly property bool iconOnly: modelData === "batteryIcon" || modelData === "signalIcon"
                         || modelData === "placeholder"
                     readonly property string text: iconOnly ? "" : root.panelText(modelData)
-                    // Il player e le notifiche hanno senso anche a telefono
-                    // irraggiungibile; il resto si attenua.
+                    // The player and the notifications still make sense with
+                    // the phone unreachable; the rest is dimmed.
                     readonly property bool dimmed: !root.active && modelData !== "media"
                         && modelData !== "notifications"
 
@@ -776,7 +810,7 @@ PlasmoidItem {
         }
     }
 
-    // --- Popup ------------------------------------------------------------
+    // --- Popup -----------------------------------------------------------
 
     fullRepresentation: PlasmaExtras.Representation {
         id: full
@@ -879,8 +913,8 @@ PlasmoidItem {
                     required property string modelData
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    // Le pagine ricevono l'applet come proprietà iniziale, così
-                    // i loro binding non vedono mai un applet nullo.
+                    // The pages receive the applet as an initial property, so
+                    // their bindings never see a null applet.
                     Component.onCompleted: {
                         const pages = {
                             notifications: "NotificationsPage.qml",

@@ -1,12 +1,12 @@
-// Funzioni senza stato: risposte di gdbus, foto, quoting per la shell, emoji.
+// Stateless helpers: gdbus answers, photos, shell quoting, emoji.
 //
-// Il motore JavaScript di QML non conosce le regex Unicode (\p{…}, flag u):
-// i caratteri si classificano a mano per code point.
+// QML's JavaScript engine does not know Unicode regexes (\p{…}, the u flag):
+// characters are classified by code point by hand.
 .pragma library
 
-// gdbus stampa la risposta come tupla GVariant: ('…json…',) con la stringa
-// tra apici singoli (o doppi se contiene un apice) e i caratteri speciali con
-// escape. Restituisce la stringa decodificata, o null.
+// gdbus prints the answer as a GVariant tuple: ('…json…',) with the string in
+// single quotes (or double quotes when it contains one) and special characters
+// escaped. Returns the decoded string, or null.
 function gvariantString(text) {
     const match = /^\s*\((['"])([\s\S]*)\1,\)\s*$/.exec(text || "")
     if (!match)
@@ -14,7 +14,7 @@ function gvariantString(text) {
     return gvariantUnescape(match[2])
 }
 
-// Il contenuto di un letterale stringa GVariant senza gli escape.
+// The content of a GVariant string literal without its escapes.
 function gvariantUnescape(body) {
     const simple = { a: "\x07", b: "\b", f: "\f", n: "\n", r: "\r", t: "\t", v: "\v" }
     return body.replace(/\\(u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|x[0-9a-fA-F]{2}|[\s\S])/g,
@@ -25,9 +25,9 @@ function gvariantUnescape(body) {
         })
 }
 
-// Il valore stringa di una chiave in un dizionario a{sv} stampato da gdbus,
-// per esempio 'xesam:title': <"Twilight's…"> o 'xesam:artist': <['…']> (di
-// un array conta il primo elemento). "" se la chiave manca.
+// The string value of a key in an a{sv} dictionary printed by gdbus, for
+// example 'xesam:title': <"Twilight's…"> or 'xesam:artist': <['…']> (for an
+// array the first element counts). "" when the key is missing.
 function gvariantField(text, key) {
     const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const re = new RegExp("'" + escaped + "': <\\[?(?:objectpath )?(['\"])((?:\\\\.|(?!\\1)[\\s\\S])*)\\1")
@@ -35,14 +35,14 @@ function gvariantField(text, key) {
     return match ? gvariantUnescape(match[2]) : ""
 }
 
-// Un numero di una chiave a{sv}: 'mpris:length': <int64 456733000>.
+// A number from an a{sv} key: 'mpris:length': <int64 456733000>.
 function gvariantNumber(text, key) {
     const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const match = new RegExp("'" + escaped + "': <(?:u?int\\d+ |double )?(-?[0-9.]+)>").exec(text || "")
     return match ? Number(match[1]) : NaN
 }
 
-// La risposta JSON di un metodo BlueFerry, o undefined se illeggibile.
+// A BlueFerry method's JSON answer, or undefined if unreadable.
 function gvariantJson(text) {
     const json = gvariantString(text)
     if (json === null)
@@ -54,7 +54,7 @@ function gvariantJson(text) {
     }
 }
 
-// Un array di byte stampato da gdbus: ([byte 0xff, 0xd8, …],) oppure (@ay [],).
+// A byte array printed by gdbus: ([byte 0xff, 0xd8, …],) or (@ay [],).
 function gvariantBytes(text) {
     const body = /\[([^\]]*)\]/.exec(text || "")
     if (!body)
@@ -83,7 +83,7 @@ function base64(bytes) {
     return out.join("")
 }
 
-// Un'immagine come data URI, solo se i primi byte sono davvero JPEG o PNG.
+// An image as a data URI, only if the first bytes really are JPEG or PNG.
 function imageUri(bytes) {
     if (bytes.length > 4 && bytes[0] === 0xff && bytes[1] === 0xd8)
         return "data:image/jpeg;base64," + base64(bytes)
@@ -92,13 +92,13 @@ function imageUri(bytes) {
     return ""
 }
 
-// Un argomento sicuro per /bin/sh.
+// An argument that is safe for /bin/sh.
 function shellQuote(text) {
     return "'" + String(text).replace(/'/g, "'\\''") + "'"
 }
 
-// Un numero di telefono come lo riporta l'iPhone; tutto il resto è scartato
-// prima di finire in un comando.
+// A phone number as the iPhone reports it; anything else is rejected before it
+// ends up in a command.
 function isPhoneAddress(text) {
     return typeof text === "string" && /^[+0-9][0-9 ()*#+.-]{0,39}$/.test(text)
 }
@@ -113,14 +113,14 @@ function isEmoji(cp) {
         || (cp >= 0x2300 && cp <= 0x23FF) || (cp >= 0x2B00 && cp <= 0x2BFF)
 }
 
-// Caratteri che si legano all'emoji precedente: ZWJ, selettore di variante,
-// keycap e tag delle bandiere regionali.
+// Characters that bind to the preceding emoji: ZWJ, variation selector, keycap
+// and regional flag tags.
 function isJoiner(cp) {
     return cp === 0x200D || cp === 0xFE0F || cp === 0x20E3 || (cp >= 0xE0020 && cp <= 0xE007F)
 }
 
-// Testo per Text.StyledText: il resto resta nel font del tema, le sequenze
-// emoji passano al font scelto (Apple Color Emoji, come sull'iPhone).
+// Text for Text.StyledText: the rest stays in the theme font, emoji sequences
+// switch to the chosen font (Apple Color Emoji, as on the iPhone).
 function styled(text, emojiFont) {
     if (text === null || text === undefined)
         return ""
@@ -130,7 +130,8 @@ function styled(text, emojiFont) {
         const last = runs.length > 0 ? runs[runs.length - 1] : null
         if (isJoiner(cp)) {
             if (last && !last.emoji && (cp === 0xFE0F || cp === 0x20E3)) {
-                // "1️⃣", "©️": il carattere prima del selettore diventa emoji.
+                // "1️⃣", "©️": the character before the selector becomes an
+                // emoji.
                 const chars = Array.from(last.text)
                 const base = chars.pop()
                 last.text = chars.join("")
@@ -153,8 +154,8 @@ function styled(text, emojiFont) {
     }).join("")
 }
 
-// Iniziali per l'avatar di un contatto senza foto: prima lettera della prima
-// e dell'ultima parola che non comincia con un'emoji o un simbolo.
+// Initials for the avatar of a contact without a photo: the first letter of the
+// first and the last word that does not start with an emoji or a symbol.
 function initials(name) {
     const words = String(name || "").trim().split(/\s+/).filter(word => {
         const cp = word.codePointAt(0)
@@ -167,10 +168,10 @@ function initials(name) {
     return (first + second).toUpperCase()
 }
 
-// Testo di una notifica senza i caratteri che non si vedono. BlueFerry
-// sostituisce con "�" i controlli e i marcatori di direzione del testo (i
-// bidi isolate con cui Discord racchiude i nomi): su iOS sono invisibili,
-// quindi qui spariscono, insieme agli altri caratteri di formato invisibili.
+// A notification's text without the characters that cannot be seen. BlueFerry
+// replaces controls and text direction marks with "�" (the bidi isolates
+// Discord wraps names in): they are invisible on iOS, so they go away here,
+// along with the other invisible format characters.
 function cleanText(text) {
     let out = ""
     for (const ch of String(text || "")) {
@@ -184,8 +185,9 @@ function cleanText(text) {
         .replace(/ +\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim()
 }
 
-// Nomi d'icona da provare per un'app dell'iPhone, dal più specifico al più
-// generico. Il tema d'icone di solito le chiama col nome in minuscolo.
+// Icon names to try for an iPhone app, from the most specific to the most
+// generic. Icon themes usually name them after the app in lower case. The
+// aliases cover the system apps under their English and Italian iOS names.
 const ICON_ALIASES = {
     "telegram": ["org.telegram.desktop", "telegram"],
     "whatsapp": ["whatsapp", "com.github.eneshecan.whatsappforlinux"],
@@ -225,8 +227,7 @@ function iconCandidates(appName) {
     return names
 }
 
-// Due titoli di brano a confronto, ignorando maiuscole, accenti, spazi e
-// punteggiatura.
+// Compares two track titles, ignoring case, accents, spaces and punctuation.
 function sameTitle(a, b) {
     const norm = text => String(text || "").toLowerCase().normalize("NFKD")
         .replace(/[̀-ͯ]/g, "").replace(/[^0-9a-z]+/g, "")
