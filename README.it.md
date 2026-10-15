@@ -83,6 +83,10 @@ il ritmo non è noto) la stima scade, e un calo la toglie subito: un telefono
 carico o tenuto all'80 % da iOS non viene più annunciato. Una lettura persa o
 una disconnessione sotto i 2 minuti non azzerano la stima.
 
+Con le chiamate Wi-Fi iOS aggiunge " Wi-Fi" al nome dell'operatore, che HFP
+taglia a 16 caratteri ("vodafone IT Wi F"). L'applet toglie il pezzo troncato
+e al suo posto mostra un'icona Wi-Fi dopo l'operatore.
+
 Il tipo di rete (LTE, 5G…) non è disponibile: il profilo vivavoce Bluetooth
 dell'iPhone espone solo stato, operatore, segnale e modalità.
 

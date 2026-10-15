@@ -37,6 +37,8 @@ Item {
             const parts = []
             if (applet.networkText !== applet.dash)
                 parts.push(applet.networkText)
+            if (applet.wifiCalling)
+                parts.push(i18n("Wi-Fi calling"))
             const registration = applet.registrationText(applet.networkStatus)
             if (registration !== applet.dash)
                 parts.push(registration)

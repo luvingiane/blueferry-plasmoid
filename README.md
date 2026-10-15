@@ -87,6 +87,10 @@ rate is known) the estimate expires, and a drop ends it at once, so a full
 phone or one held at 80 % by iOS is no longer announced. A missed reading or
 a disconnect shorter than 2 minutes keeps the estimate.
 
+During Wi-Fi calling iOS appends " Wi-Fi" to the operator name, which HFP
+cuts at 16 characters ("vodafone IT Wi F"). The applet drops the cut suffix
+and shows a Wi-Fi icon after the operator instead.
+
 The network type (LTE, 5G…) is not available: the iPhone's Bluetooth
 hands-free profile only reports status, carrier, signal and mode.
 

@@ -234,3 +234,25 @@ function sameTitle(a, b) {
     const x = norm(a)
     return x !== "" && x === norm(b)
 }
+
+// HFP reports the operator name in at most 16 characters (AT+COPS?).
+const HFP_NAME_CHARS = 16
+
+// During Wi-Fi calling iOS appends " Wi-Fi" to the operator name; over HFP the
+// hyphen becomes a space and the name is cut at 16 characters, so it arrives
+// as "vodafone IT Wi F". Returns {name, wifi}: the operator without the suffix
+// and whether Wi-Fi calling is on. A cut suffix ("Wi", "Wi F", "Wi-F") only
+// counts when the name has the full HFP length, so a real name ending in "Wi"
+// stays as it is.
+function splitWifiCalling(name) {
+    const text = String(name || "")
+    const full = /^(.*\S)\s+Wi[\s-]?Fi$/i.exec(text)
+    if (full)
+        return { name: full[1], wifi: true }
+    if (Array.from(text).length >= HFP_NAME_CHARS) {
+        const cut = /^(.*\S)\s+Wi(?:[\s-]F?)?$/i.exec(text)
+        if (cut)
+            return { name: cut[1], wifi: true }
+    }
+    return { name: text, wifi: false }
+}

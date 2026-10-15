@@ -81,7 +81,11 @@ PlasmoidItem {
     readonly property string signalText: signalBars < 0 ? dash
         : i18n("%1 % (%2/5)", signalStrength, signalBars)
 
-    readonly property string networkText: networkName === null || networkName === "" ? dash : networkName
+    // The operator without the truncated " Wi-Fi" suffix iOS adds during
+    // Wi-Fi calling; wifiCalling says whether it was there.
+    readonly property var networkParts: Util.splitWifiCalling(networkName)
+    readonly property bool wifiCalling: networkParts.wifi
+    readonly property string networkText: networkName === null || networkName === "" ? dash : networkParts.name
 
     // The iPhone does not report whether it is charging (its Battery Service
     // only has Battery Level, and HFP only the level), so it is estimated from
@@ -389,6 +393,13 @@ PlasmoidItem {
     property bool messagesBusy: false
     property bool airplayBusy: false
 
+    // Whether a freshly parsed value differs from the current one. Reassigning
+    // an equal array would make every ListView using it destroy and recreate
+    // all its delegates (photos, rounded clips, GPU textures) on each poll.
+    function differs(current, next) {
+        return JSON.stringify(current) !== JSON.stringify(next)
+    }
+
     function nullable(value) {
         return value === undefined ? null : value
     }
@@ -452,7 +463,9 @@ PlasmoidItem {
         call("Media1.GetNowPlaying", "", (code, out) => {
             mediaBusy = false
             const value = code === 0 ? Util.gvariantJson(out) : undefined
-            nowPlaying = value && typeof value === "object" ? value : null
+            const next = value && typeof value === "object" ? value : null
+            if (differs(nowPlaying, next))
+                nowPlaying = next
             mediaFetchedAt = Date.now()
             clock = mediaFetchedAt
         })
@@ -470,12 +483,13 @@ PlasmoidItem {
             + " org.mpris.MediaPlayer2.Player", (code, out) => {
             airplayBusy = false
             if (code !== 0) {
-                airplay = null
+                if (airplay !== null)
+                    airplay = null
                 return
             }
             const art = Util.gvariantField(out, "mpris:artUrl")
             const length = Util.gvariantNumber(out, "mpris:length")
-            airplay = {
+            const next = {
                 status: Util.gvariantField(out, "PlaybackStatus"),
                 title: Util.gvariantField(out, "xesam:title"),
                 artist: Util.gvariantField(out, "xesam:artist"),
@@ -484,6 +498,8 @@ PlasmoidItem {
                 art: art.startsWith("file:///tmp/shairport-sync/") ? art : "",
                 length: isNaN(length) ? 0 : length / 1000000
             }
+            if (differs(airplay, next))
+                airplay = next
         })
     }
 
@@ -541,7 +557,9 @@ PlasmoidItem {
             const value = code === 0 ? Util.gvariantJson(out) : undefined
             if (!Array.isArray(value))
                 return
-            calls = value.filter(entry => entry && typeof entry === "object")
+            const next = value.filter(entry => entry && typeof entry === "object")
+            if (differs(calls, next))
+                calls = next
             for (const entry of calls) {
                 if (Util.isPhoneAddress(entry.address) && photos[entry.address] === undefined
                         && photoQueue.indexOf(entry.address) < 0)
@@ -590,7 +608,7 @@ PlasmoidItem {
                 return
             ensureAppIcon(i18n("Messages"))
             const before = messages.length > 0 ? messages[0].time : null
-            messages = value.filter(event => event && typeof event === "object").map(event => ({
+            const next = value.filter(event => event && typeof event === "object").map(event => ({
                 kind: "sms",
                 app: i18n("Messages"),
                 title: Util.cleanText(event.group_name || event.contact_name || event.sender_address)
@@ -598,6 +616,9 @@ PlasmoidItem {
                 body: Util.cleanText(event.body),
                 time: new Date(event.timestamp || event.seen_at || 0)
             })).sort((a, b) => b.time - a.time)
+            if (!differs(messages, next))
+                return
+            messages = next
             if (before !== null && !root.expanded)
                 unseen += messages.filter(message => message.time > before).length
         })
@@ -740,7 +761,8 @@ PlasmoidItem {
     toolTipSubText: {
         if (!active)
             return reason
-        const lines = [i18n("Carrier: %1", networkText), charging
+        const lines = [wifiCalling ? i18n("Carrier: %1, Wi-Fi calling", networkText)
+            : i18n("Carrier: %1", networkText), charging
             ? i18n("Battery: %1, %2", batteryText, chargingText) : i18n("Battery: %1", batteryText),
             i18n("Signal: %1", signalText)]
         if (mediaText !== "")
@@ -852,6 +874,14 @@ PlasmoidItem {
                         maximumLineCount: 1
                         Layout.maximumWidth: element.modelData === "media" ? Kirigami.Units.gridUnit * 10
                             : compact.vertical ? compact.width : -1
+                        Layout.alignment: Qt.AlignCenter
+                    }
+                    // Wi-Fi calling, in place of the cut "Wi F" after the operator.
+                    Kirigami.Icon {
+                        visible: element.modelData === "operator" && root.wifiCalling && element.text !== ""
+                        source: "network-wireless-symbolic"
+                        Layout.preferredWidth: Math.round(compact.iconSize * 0.75)
+                        Layout.preferredHeight: Layout.preferredWidth
                         Layout.alignment: Qt.AlignCenter
                     }
                 }
