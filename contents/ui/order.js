@@ -5,8 +5,9 @@
 // quelli mancanti (aggiunti in versioni successive) finiscono in fondo, nascosti.
 .pragma library
 
-const PANEL_IDS = ["batteryIcon", "batteryText", "signalIcon", "signalText", "operator", "title"]
-const POPUP_IDS = ["battery", "source", "signal", "operator", "registration", "bluetooth"]
+const PANEL_IDS = ["batteryIcon", "batteryText", "signalIcon", "signalText", "operator", "title", "media", "notifications"]
+const SECTION_IDS = ["battery", "network", "bluetooth"]
+const TAB_IDS = ["status", "notifications", "player", "calls"]
 
 function parse(entries, ids) {
     const items = []

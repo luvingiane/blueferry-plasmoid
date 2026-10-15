@@ -12,11 +12,23 @@
     </entry>
     <!-- Elementi del pannello in ordine; "-id" è nascosto (vedi order.js). -->
     <entry name="panelItems" type="StringList">
-      <default>batteryIcon,batteryText,signalIcon,operator,-signalText,-title</default>
+      <default>batteryIcon,batteryText,signalIcon,operator,-signalText,-title,-media,notifications</default>
     </entry>
-    <!-- Righe del popup in ordine; "-id" è nascosta. -->
-    <entry name="popupItems" type="StringList">
-      <default>battery,source,signal,operator,registration,bluetooth</default>
+    <!-- Schede del popup in ordine; "-id" è nascosta. -->
+    <entry name="popupTabs" type="StringList">
+      <default>status,notifications,player,calls</default>
+    </entry>
+    <!-- Font per le emoji di notifiche, nomi e brani; vuoto: quello del tema. -->
+    <entry name="emojiFont" type="String">
+      <default>Apple Color Emoji</default>
+    </entry>
+    <!-- Sezioni della scheda Stato in ordine; "-id" è nascosta. -->
+    <entry name="statusSections" type="StringList">
+      <default>battery,network,bluetooth</default>
+    </entry>
+    <!-- Cerca le copertine sull'API di iTunes quando AirPlay non le ha. -->
+    <entry name="onlineArtwork" type="Bool">
+      <default>true</default>
     </entry>
   </group>
 </kcfg>
