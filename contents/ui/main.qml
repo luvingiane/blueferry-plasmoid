@@ -346,17 +346,85 @@ PlasmoidItem {
     // --- Running commands ------------------------------------------------
 
     // The "executable" engine is shared by all of plasmashell and identifies
-    // sources by the command text. The trailing comment with the applet id and
-    // a counter gives every call its own source: otherwise two copies of the
-    // applet, or two identical calls, would compete for the same run.
-    property var pending: ({})
-    property int sequence: 0
+    // sources by the command text. Each command keeps the same source name
+    // from one run to the next: the command plus a comment with the applet id,
+    // so two copies of the applet never share a run.
+    //
+    // The name must not change on every run (a counter, say): the engine and
+    // every DataSource keep something for each name they have ever seen, at a
+    // cost that grows with them. With a new name per call, plasmashell's main
+    // thread ended up at full CPU with gigabytes of memory after a few hours.
+    //
+    // A source still known to the engine answers with its old result without
+    // running again, so a command is started again only after the engine has
+    // removed its source (sourceRemoved; the `sources` property is not
+    // updated then, so it cannot tell). A request that comes earlier waits in
+    // `queued`.
+    property var running: ({})           // source → callback of the run in progress
+    property var leaving: ({})           // source → when it was disconnected, in ms
+    property var queued: ({})            // source → callbacks waiting for their turn
 
     function run(command, callback) {
-        sequence += 1
-        const source = command + " # org.matt.iphonestatus " + Plasmoid.id + " " + sequence
-        pending[source] = callback
+        const source = command + " # org.matt.iphonestatus " + Plasmoid.id
+        if (!queued[source])
+            queued[source] = []
+        queued[source].push(callback)
+        runQueued(source)
+    }
+
+    // Starts the next waiting run of a source, once the engine has let it go.
+    function runQueued(source) {
+        const waiting = queued[source]
+        if (!waiting || source in running || source in leaving)
+            return
+        const callback = waiting.shift()
+        if (waiting.length === 0)
+            delete queued[source]
+        running[source] = callback || null
         executable.connectSource(source)
+    }
+
+    Plasma5Support.DataSource {
+        id: executable
+        engine: "executable"
+        connectedSources: []
+        onNewData: (source, data) => {
+            // An update without an exit code arrives before the process has
+            // finished: wait for the real result.
+            if (data["exit code"] === undefined || !(source in root.running))
+                return
+            const callback = root.running[source]
+            delete root.running[source]
+            root.leaving[source] = Date.now()
+            disconnectSource(source)
+            if (callback)
+                callback(data["exit code"], data["stdout"] || "", data["stderr"] || "")
+        }
+        // The next run starts once the engine has finished removing the
+        // source: connecting it again from inside the removal leaves the new
+        // run without a removal of its own.
+        onSourceRemoved: source => {
+            delete root.leaving[source]
+            Qt.callLater(() => root.runQueued(source))
+        }
+    }
+
+    // The engine removes a source a few milliseconds after it is let go; one
+    // that has not gone after a few seconds is assumed gone, so that a missed
+    // removal cannot hold its command back for good.
+    Timer {
+        interval: 5000
+        running: true
+        repeat: true
+        onTriggered: {
+            const now = Date.now()
+            for (const source of Object.keys(root.leaving)) {
+                if (now - root.leaving[source] > 5000) {
+                    delete root.leaving[source]
+                    root.runQueued(source)
+                }
+            }
+        }
     }
 
     // A BlueFerry method; args is already shell-ready.
@@ -368,23 +436,6 @@ PlasmoidItem {
     // Use it only with text that was already validated.
     function gvariantArg(text) {
         return Util.shellQuote('"' + text + '"')
-    }
-
-    Plasma5Support.DataSource {
-        id: executable
-        engine: "executable"
-        connectedSources: []
-        onNewData: (source, data) => {
-            // An update without an exit code arrives before the process has
-            // finished: wait for the real result.
-            if (data["exit code"] === undefined)
-                return
-            disconnectSource(source)
-            const callback = root.pending[source]
-            delete root.pending[source]
-            if (callback)
-                callback(data["exit code"], data["stdout"] || "", data["stderr"] || "")
-        }
     }
 
     // --- Reading the data ------------------------------------------------
